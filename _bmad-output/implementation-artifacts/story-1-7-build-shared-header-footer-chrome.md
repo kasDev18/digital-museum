@@ -1,7 +1,7 @@
 # Story 1.7: Build Shared Header & Footer Chrome
 
 **Epic:** Epic 1 - Project Setup  
-**Status:** Not Started  
+**Status:** Ready for Dev  
 **Priority:** High  
 **Story Points:** 3
 
@@ -21,7 +21,7 @@
 
 ## Technical Notes
 - Logo asset: `Logo (1).png` (arc/sunburst icon) — `Logo.png` export is a blank/transparent placeholder, not usable as-is
-- Implement theme toggle via a `class="dark"` strategy on `<html>` + Tailwind `dark:` variants, or a small ThemeProvider context
+- Dark navy is the *default* theme (not an OS-preference opt-in), so Tailwind's built-in `dark:` variant (which targets `prefers-color-scheme`/a `.dark` class) is the wrong mechanism here. Story 1.2 already laid the foundation as an opt-in `.light` class on `<html>` (see `src/app/globals.css`) that overrides the `--background`/`--foreground` tokens — toggle it by adding/removing `.light`, and persist the choice to localStorage
 - Font-size scaling can be a simple `--font-scale` CSS variable multiplied into base rem sizing, adjusted by the A+/A- buttons
 - Keep this component tree in `/components/layout` (e.g. `SiteHeader`, `SiteFooter`) per the folder structure in Story 1.4
 

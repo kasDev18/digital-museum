@@ -1,7 +1,7 @@
 # Story 1.3: Install and Configure GSAP
 
 **Epic:** Epic 1 - Project Setup  
-**Status:** Not Started  
+**Status:** Ready for Dev  
 **Priority:** High  
 **Story Points:** 2
 
