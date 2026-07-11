@@ -2,21 +2,21 @@
 @reference '../../../../../app/globals.css';
 
 .ThemeFontControls {
-  @apply bg-cream border-navy/10 flex items-center gap-2 rounded-full border px-3 py-2.5;
+  @apply bg-cream border-navy/10 flex items-center gap-1 rounded-full border px-2 py-1.5 sm:gap-2 sm:px-3 sm:py-2.5;
 }
 
 .ThemeFontControls_themeBtn {
-  @apply text-navy hover:bg-navy/10 flex h-11 w-11 items-center justify-center rounded-full transition-colors;
+  @apply text-navy hover:bg-navy/10 flex h-8 w-8 items-center justify-center rounded-full transition-colors sm:h-11 sm:w-11;
 }
 
 .ThemeFontControls_themeIcon {
-  @apply h-7 w-7;
+  @apply h-5 w-5 sm:h-7 sm:w-7;
 }
 
 .ThemeFontControls_slider {
-  @apply bg-navy/15 h-6 w-px;
+  @apply bg-navy/15 h-4 w-px sm:h-6;
 }
 
 .ThemeFontControls_fontBtn {
-  @apply text-navy hover:bg-navy/10 flex h-11 w-11 items-center justify-center rounded-full transition-colors disabled:cursor-not-allowed disabled:opacity-40;
+  @apply text-navy hover:bg-navy/10 flex h-8 w-8 items-center justify-center rounded-full transition-colors disabled:cursor-not-allowed disabled:opacity-40 sm:h-11 sm:w-11;
 }
