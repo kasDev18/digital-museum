@@ -88,26 +88,49 @@ pnpm check            # Run lint, type check, and format check
 ```
 digital-museum/
 ├── src/
-│   ├── app/              # Next.js App Router pages
-│   │   ├── layout.tsx    # Root layout with theme providers
-│   │   ├── page.tsx      # Home page
-│   │   ├── home/         # Home page components
-│   │   └── gsap-demo/    # GSAP + ScrollTrigger setup smoke-test route
-│   ├── components/       # Reusable React components
-│   └── lib/              # Shared utilities (e.g. gsap-utils.ts)
-├── public/               # Static assets (images, fonts)
-├── docs/                # Additional documentation (e.g. GSAP performance guide)
-├── .github/             # GitHub workflows and configurations
-├── AGENTS.md            # AI agent guidelines
-├── EPICS_AND_STORIES.md # Detailed project specifications
-├── CLAUDE.md            # Claude-specific rules
-├── package.json         # Project dependencies and scripts
-├── tsconfig.json        # TypeScript configuration
-├── next.config.ts       # Next.js configuration
-├── eslint.config.mjs    # ESLint configuration
-├── prettier.config.mjs  # Prettier configuration
-└── postcss.config.mjs   # PostCSS configuration
+│   ├── app/                     # Next.js App Router — routing + page-specific components
+│   │   ├── layout.tsx           # Root layout (fonts, metadata, theme providers)
+│   │   ├── page.tsx             # `/` route
+│   │   ├── fonts.ts             # next/font/google definitions (Patua One, Playfair Display)
+│   │   ├── landing/             # Landing page route segment (Epic 2)
+│   │   │   └── components/      # Landing-only components, colocated (not routable)
+│   │   ├── list/                # List/gallery page route segment (Epic 3/4)
+│   │   │   └── components/      # List-only components, colocated (not routable)
+│   │   ├── detail/              # Artifact detail page route segment (Epic 5)
+│   │   │   └── components/      # Detail-only components, colocated (not routable)
+│   │   └── gsap-demo/           # GSAP + ScrollTrigger setup smoke-test route
+│   │       └── components/      # e.g. gsap-scroll-demo, colocated (demo-only)
+│   ├── components/              # Components shared across more than one page
+│   │   ├── layout/               # Shared chrome (SiteHeader, SiteFooter — Story 1.7)
+│   │   └── ui/                   # Shared, page-agnostic primitives (buttons, icons, etc.)
+│   ├── data/                    # Mock data (e.g. `mock-data.ts` — Story 1.5)
+│   ├── lib/                     # Shared utilities: gsap-utils.ts, utils.ts, data-utils.ts (Story 1.5)
+│   └── types/                   # Shared TypeScript interfaces (e.g. `artifact.ts` — Story 1.5)
+├── public/                      # Static assets, organized by type
+│   ├── images/                  # Photography/artwork (artifact imagery — Story 1.5+)
+│   └── assets/                  # Icons and other non-photographic static assets
+├── docs/                        # Additional documentation (e.g. GSAP performance guide)
+├── .github/                     # GitHub workflows and configurations
+├── AGENTS.md                    # AI agent guidelines
+├── EPICS_AND_STORIES.md         # Detailed project specifications
+├── CLAUDE.md                    # Claude-specific rules
+├── package.json                 # Project dependencies and scripts
+├── tsconfig.json                # TypeScript configuration
+├── next.config.ts               # Next.js configuration
+├── eslint.config.mjs            # ESLint configuration
+├── prettier.config.mjs          # Prettier configuration
+└── postcss.config.mjs           # PostCSS configuration
 ```
+
+### Conventions
+
+- **Page-specific components are colocated in `app/`.** Each route segment that needs its own components gets a `components/` subfolder next to its `page.tsx` (e.g. `app/landing/components/`, `app/gsap-demo/components/gsap-scroll-demo/`). A bare `components` folder has no special Next.js filename inside it, so it's never routable — it's purely an implementation detail of that route.
+- **`src/components` is reserved for components shared across more than one page** — the site-wide chrome (`layout/`, e.g. `SiteHeader`/`SiteFooter` from Story 1.7) and generic, page-agnostic UI primitives (`ui/`, e.g. buttons, form controls). If a component is only ever used by one page, it belongs under that page's `app/<route>/components/`, not here.
+- Multi-file components use a folder with an `index.tsx` (see `app/gsap-demo/components/gsap-scroll-demo` for the pattern) plus a co-located CSS module when custom styles are needed.
+- **`data/` vs `lib/`:** `data/` holds the static mock content itself (e.g. `mock-data.ts`); `lib/` holds the utilities that operate on it (e.g. `data-utils.ts`) alongside other shared helpers (`gsap-utils.ts`, `utils.ts`).
+- **`types/`** holds shared interfaces consumed across pages/components (e.g. `Artifact`). Component-local prop types stay next to the component.
+- **`public/`** is split by asset type: `images/` for photographic/artifact media, `assets/` for icons and other static files. Reference them with an absolute path from the public root (e.g. `/assets/vercel.svg`).
+- Currently-empty directories are kept in version control with a `.gitkeep` placeholder until their first real file lands in a later story.
 
 ## 🎨 Design System
 
