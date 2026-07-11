@@ -12,9 +12,11 @@
 
 ## Acceptance Criteria
 - [ ] TypeScript interface defined for Artifact data model
-- [ ] Mock data file created with 8-12 artifacts across 3-4 categories
+- [ ] Mock data file created with the 12 real artifacts from the Figma board: Wooden Chest, Vyshyvanka, Carnival Mask, Beaded Gown, Mshatta Façade, Lei Po'o, Tatreez Thobe, Mbira, Minbar, Bamboo Pen, Backgammon Board, Jamdani
 - [ ] Data includes all required fields: id, title, type, thumbnail, media, description
-- [ ] Optional fields included: audioUrl, pdfUrl, location
+- [ ] Category (`type`) values are drawn from the real 7-category set: Architectural, Ceremonial, Decorative, Musical, Playful, Useable, Wearable (with "All Objects" handled as a UI-level "no filter" state, not a stored category)
+- [ ] Contributor fields included: `contributor.name` and `contributor.quote`, matching the "Contributed by [Name]" byline and pull-quote seen on the detail mock (e.g. Mshatta Façade / Mansoor Alemy)
+- [ ] Optional fields included: audioUrl (+ duration), pdfUrl, journey (migration path)
 - [ ] Data utility functions for filtering and accessing artifacts
 - [ ] Data is easily extensible for additional artifacts
 
@@ -23,17 +25,22 @@
 interface Artifact {
   id: string;
   title: string;
-  type: string; // category for filtering
+  type: 'Architectural' | 'Ceremonial' | 'Decorative' | 'Musical' | 'Playful' | 'Useable' | 'Wearable';
   thumbnail: string; // image path/URL
-  media: string[]; // array of media for detail carousel
-  description: string;
-  audioUrl?: string | null;
-  pdfUrl?: string | null;
-  location?: {
-    label: string;
-    lat: number;
-    lng: number;
+  media: string[]; // supplementary images cycled via the "More Images" control on the detail page
+  description: string; // factual object history (e.g. "The Mshatta Facade is a richly decorated stone wall from an 8th-century Desert Castle of Jordan...")
+  contributor?: {
+    name: string; // e.g. "Mansoor Alemy"
+    quote: string; // pull-quote, e.g. "These scenes of creatures drinking water from one fountain together; for me, it shows peace."
+    story?: string; // personal/migration narrative paragraph shown below the factual description
   };
+  audioUrl?: string | null;
+  audioDurationSeconds?: number; // drives the "1:03 / 3:00" style elapsed/total display
+  pdfUrl?: string | null;
+  journey?: {
+    country: string; // e.g. "Myanmar"
+    flag: string; // ISO country code for flag icon, e.g. "MM"
+  }[]; // ordered From → To chain rendered by the migration-journey widget (replaces a lat/lng location model — see Story 5.7)
 }
 ```
 
@@ -63,3 +70,22 @@ interface Artifact {
 - [ ] Data layer is tested and functional
 - [ ] Code committed to repository
 - [ ] No TypeScript errors
+
+## Implementation Summary
+**Status:** ❌ Not Started  
+**Implementation Date:** N/A  
+**Actual Implementation:**
+- No mock data layer exists
+- No TypeScript interfaces defined for Artifact data model
+- No data utility functions created
+- No mock data file with artifacts
+
+**Verification:**
+- ❌ TypeScript interface defined for Artifact data model
+- ❌ Mock data file created with the 12 real artifacts from the Figma board
+- ❌ Data includes all required fields: id, title, type, thumbnail, media, description
+- ❌ Category (`type`) values are drawn from the real 7-category set
+- ❌ Contributor fields included: `contributor.name` and `contributor.quote`
+- ❌ Optional fields included: audioUrl (+ duration), pdfUrl, journey (migration path)
+- ❌ Data utility functions for filtering and accessing artifacts
+- ❌ Data is easily extensible for additional artifacts
