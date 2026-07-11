@@ -105,11 +105,11 @@ digital-museum/
 │   │   └── gsap-demo/           # GSAP + ScrollTrigger setup smoke-test route
 │   │       └── components/      # e.g. gsap-scroll-demo, colocated (demo-only)
 │   ├── components/              # Components shared across more than one page
-│   │   ├── layout/               # Shared chrome (SiteHeader, SiteFooter — Story 1.7)
-│   │   └── ui/                   # Shared, page-agnostic primitives (buttons, icons, etc.)
+│   │   ├── layout/               # Shared chrome — SiteHeader, SiteFooter (Story 1.7)
+│   │   └── ui/                   # Shared, page-agnostic primitives — icons.tsx (Story 1.7)
 │   ├── data/                    # Mock data — `mock-data.ts` (Story 1.5): 12 artifacts
-│   ├── lib/                     # Shared utilities: gsap-utils.ts, utils.ts, data-utils.ts (Story 1.5)
-│   └── types/                   # Shared TypeScript interfaces — `artifact.ts` (Story 1.5)
+│   ├── lib/                     # Shared utilities: gsap-utils.ts, utils.ts, data-utils.ts (Story 1.5), theme-script.ts (Story 1.7)
+│   └── types/                   # Shared TypeScript interfaces — artifact.ts (Story 1.5), theme.ts (Story 1.7)
 ├── public/                      # Static assets, organized by type
 │   ├── images/                  # Photography/artwork (artifact imagery — referenced by mock data, added in a later story)
 │   └── assets/                  # Icons and other non-photographic static assets
@@ -206,6 +206,13 @@ The 7 categories live in a single source of truth, `ARTIFACT_TYPES` (`src/types/
   - `getArtifactsByType(type = "All Objects")` — filters by category; the default (or the `ALL_OBJECTS_FILTER` sentinel) returns everything, matching the list page's "no filter" state (Story 4.2).
   - `getArtifactCategories()` — `["All Objects", ...ARTIFACT_TYPES]` (also exported as the `ARTIFACT_CATEGORIES` constant), ready to render the category filter bar.
 - `audioUrl`/`pdfUrl` are non-optional in the `Artifact` type — always a path or explicit `null`, never omitted — so consuming UI can check them directly without an `in` guard; `journey` and `contributor` are populated on all 12 artifacts in this dataset.
+
+### Shared Chrome, Theme & Font-Size Controls (Story 1.7)
+
+- **`src/components/layout/site-header`** (`SiteHeader`) and **`site-footer`** (`SiteFooter`, plus `ThemeFontControls` in `site-footer/components/theme-font-controls`) render on every route from the root layout (`src/app/layout.tsx`) — never duplicated per page. Each is styled with a co-located CSS Module (`styles.module.css`, `@apply` under `@reference "tailwindcss"` + `globals.css`) rather than inline utility classes, per this file's own "Multi-file components" convention above.
+- **Theme:** dark navy is the default; toggling adds/removes the `.light` class on `<html>` (the opt-in variant Story 1.2 already defined in `globals.css`), persisted to `localStorage`. The footer's utility pill itself is a fixed light (`cream`/`navy`) badge regardless of theme, by design — it doesn't invert with the toggle.
+- **Font size:** the "A+"/"A-" controls adjust a `--font-scale` CSS custom property (clamped 0.85–1.3, `src/lib/theme-script.ts`) multiplied into `html`'s base `font-size`, so all of Tailwind's `rem`-based sizing scales with it — also persisted to `localStorage`.
+- **No flash on load:** a small inline `<script>` in `<head>` (`THEME_INIT_SCRIPT`) reads both `localStorage` keys and applies them before first paint. `ThemeFontControls` seeds its React state with lazy `useState` initializers reading the same keys, per the [Next.js guide on preventing a flash before hydration](https://nextjs.org/docs/app/guides/preventing-flash-before-hydration) — the two always agree, so no `useEffect`-driven re-sync is needed. A second script, `CONTROLS_SYNC_SCRIPT`, is rendered inside `ThemeFontControls` itself (after its buttons, each given a stable `id`) to patch `disabled`/`aria-pressed`/`aria-label` for returning visitors with a saved non-default preference — those attributes aren't touched by `THEME_INIT_SCRIPT` (which runs in `<head>`, before the buttons exist), so without this second patch a returning visitor would hit a real hydration mismatch.
 
 ## 🎬 Animation Strategy
 

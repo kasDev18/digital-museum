@@ -1,0 +1,26 @@
+@reference "tailwindcss";
+@reference '../../../app/globals.css';
+
+.SiteFooter {
+  @apply flex flex-col gap-4 px-6 py-6 sm:flex-row sm:items-center sm:justify-between sm:px-10;
+}
+
+.SiteFooter_copyright {
+  @apply text-foreground-muted;
+}
+
+.SiteFooter_copyrightIcon {
+  @apply h-3 w-auto;
+}
+
+.SiteFooter_links {
+  @apply flex items-center gap-5;
+}
+
+.SiteFooter_link {
+  @apply text-foreground-muted hover:text-foreground transition-colors;
+}
+
+.SiteFooter_linkIcon {
+  @apply h-5 w-5;
+}

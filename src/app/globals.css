@@ -11,6 +11,9 @@
   --background-elevated: var(--navy-800);
   --foreground: var(--cream-100);
   --foreground-muted: var(--cream-200);
+
+  /* Global text-size scale, adjusted by the footer's A+/A- controls (Story 1.7) */
+  --font-scale: 1;
 }
 
 /* Light theme variant, toggled via the header/footer theme switch (Story 1.7) */
@@ -32,6 +35,10 @@
 
   --font-display: var(--font-patua-one);
   --font-serif: var(--font-playfair-display);
+}
+
+html {
+  font-size: calc(16px * var(--font-scale));
 }
 
 body {
