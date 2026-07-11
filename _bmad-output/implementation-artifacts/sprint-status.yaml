@@ -1,0 +1,134 @@
+# generated: 2026-07-11
+# last_updated: 2026-07-11
+# project: digital-museum
+# project_key: NOKEY
+# tracking_system: file-system
+# story_location: _bmad-output/implementation-artifacts
+# scope: Digital Museum Website Technical Assessment (6 epics, 38 stories: 30 required + 8 stretch)
+# source: EPICS_AND_STORIES.md (repo root)
+# readiness: READY for implementation
+# architectural_decision: Next.js (App Router) + Tailwind CSS + GSAP for animations, no backend/CMS required, mock data-driven content
+# NOTE: This is a technical assessment project with a 4-day deadline (July 15, 2026). Required scope = Epics 1-4 + 6 (Landing Page + List Page + QA). Epic 5 (Details Page) is stretch scope only if time permits.
+
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+#   - cancelled: Epic closed (premise invalidated)
+#
+# Epic Status Transitions:
+#   - backlog → in-progress: Automatically when first story is created
+#   - in-progress → done: Manually when all stories reach 'done' status
+#
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - ready-for-dev: Story file created in stories folder
+#   - in-progress: Developer actively working on implementation
+#   - review: Ready for code review
+#   - done: Story completed
+#   - cancelled: Story closed before any code lands (premise invalidated)
+#
+# WORKFLOW NOTES:
+# ===============
+# - Epic transitions to 'in-progress' automatically when first story is created
+# - Stories can be worked in parallel if team capacity allows
+# - Priority: Complete Epics 1-4 + 6 first (required scope for deadline)
+# - Epic 5 (Details Page) is stretch scope - only attempt if time permits after required scope is complete
+# - Deadline: July 15, 2026 (4 days from project start)
+
+generated: 2026-07-11
+last_updated: 2026-07-11
+project: digital-museum
+project_key: NOKEY
+tracking_system: file-system
+story_location: '_bmad-output/implementation-artifacts'
+
+development_status:
+  # ─────────────────────────────────────────────────────────────────────────
+  # Epic 1: Project Setup
+  # Stories: 7 │ Priority: High │ Required Scope
+  # Foundation: Next.js App Router, Tailwind CSS, GSAP, project structure, mock data, shared chrome
+  # ─────────────────────────────────────────────────────────────────────────
+  epic-1: backlog
+  1-1-initialize-nextjs-project-with-app-router: backlog
+  1-2-configure-tailwind-css: backlog
+  1-3-install-and-configure-gsap: backlog
+  1-4-establish-project-folder-structure: backlog
+  1-5-create-mock-data-layer: backlog
+  1-6-create-readme-skeleton: backlog
+  1-7-build-shared-header-footer-chrome: backlog
+  epic-1-retrospective: optional
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Epic 2: Landing Page
+  # Stories: 5 │ Priority: High │ Required Scope
+  # Hero section with GSAP animations, responsive design, CTA navigation
+  # ─────────────────────────────────────────────────────────────────────────
+  epic-2: backlog
+  2-1-build-landing-page-static-layout: backlog
+  2-2-implement-background-disc-animation: backlog
+  2-3-add-scroll-based-content-animations: backlog
+  2-4-wire-cta-navigation-to-list-page: backlog
+  2-5-responsive-polish-for-landing-page: backlog
+  epic-2-retrospective: optional
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Epic 3: List Page Foundation
+  # Stories: 5 │ Priority: High │ Required Scope
+  # Dual view modes (Grid/List), data-driven components, view switcher
+  # ─────────────────────────────────────────────────────────────────────────
+  epic-3: backlog
+  3-1-create-artifact-thumbnail-component: backlog
+  3-2-build-grid-view-layout: backlog
+  3-3-build-list-view-layout: backlog
+  3-4-implement-view-switcher-toggle: backlog
+  3-5-wire-thumbnail-navigation-to-detail-page: backlog
+  epic-3-retrospective: optional
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Epic 4: List Page Interaction
+  # Stories: 5 │ Priority: High │ Required Scope
+  # Drag/pan canvas, touch support, category filtering, state management
+  # ─────────────────────────────────────────────────────────────────────────
+  epic-4: backlog
+  4-1-implement-drag-pan-canvas-for-grid-view: backlog
+  4-2-add-category-filter-bar: backlog
+  4-3-implement-empty-state-handling: backlog
+  4-4-preserve-state-across-view-mode-switching: backlog
+  4-5-touch-support-optimization-for-mobile: backlog
+  epic-4-retrospective: optional
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Epic 5: Details Page (Stretch/Optional)
+  # Stories: 8 │ Priority: Low (Stretch) │ Optional Scope
+  # Media "More Images" stepper, audio player/zoom/download/comment/migration-journey controls
+  # ONLY ATTEMPT IF TIME PERMITS after Epics 1-4 + 6 are complete
+  # ─────────────────────────────────────────────────────────────────────────
+  epic-5: backlog
+  5-1-build-detail-page-layout: backlog
+  5-2-implement-media-carousel: backlog
+  5-3-add-audio-controls: backlog
+  5-4-add-zoom-controls: backlog
+  5-5-add-download-pdf-action: backlog
+  5-6-add-comment-affordance: backlog
+  5-7-add-migration-journey-widget: backlog
+  5-8-responsive-polish-for-detail-page: backlog
+  epic-5-retrospective: optional
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Epic 6: QA & Delivery
+  # Stories: 8 │ Priority: High │ Required Scope
+  # Cross-breakpoint testing, animation performance, code quality, submission
+  # ─────────────────────────────────────────────────────────────────────────
+  epic-6: backlog
+  6-1-cross-breakpoint-responsive-qa: backlog
+  6-2-animation-performance-pass: backlog
+  6-3-cross-browser-compatibility-check: backlog
+  6-4-code-quality-and-architecture-review: backlog
+  6-5-update-readme-with-final-information: backlog
+  6-6-repository-cleanup-and-organization: backlog
+  6-7-final-build-and-deployment-test: backlog
+  6-8-create-github-repository-and-submit: backlog
+  epic-6-retrospective: optional
