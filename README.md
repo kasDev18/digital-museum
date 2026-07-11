@@ -91,10 +91,12 @@ digital-museum/
 │   ├── app/              # Next.js App Router pages
 │   │   ├── layout.tsx    # Root layout with theme providers
 │   │   ├── page.tsx      # Home page
-│   │   └── home/         # Home page components
-│   └── components/       # Reusable React components
+│   │   ├── home/         # Home page components
+│   │   └── gsap-demo/    # GSAP + ScrollTrigger setup smoke-test route
+│   ├── components/       # Reusable React components
+│   └── lib/              # Shared utilities (e.g. gsap-utils.ts)
 ├── public/               # Static assets (images, fonts)
-├── docs/                # Additional documentation
+├── docs/                # Additional documentation (e.g. GSAP performance guide)
 ├── .github/             # GitHub workflows and configurations
 ├── AGENTS.md            # AI agent guidelines
 ├── EPICS_AND_STORIES.md # Detailed project specifications
@@ -102,7 +104,6 @@ digital-museum/
 ├── package.json         # Project dependencies and scripts
 ├── tsconfig.json        # TypeScript configuration
 ├── next.config.ts       # Next.js configuration
-├── tailwind.config.js   # Tailwind CSS configuration
 ├── eslint.config.mjs    # ESLint configuration
 ├── prettier.config.mjs  # Prettier configuration
 └── postcss.config.mjs   # PostCSS configuration
@@ -131,7 +132,7 @@ digital-museum/
 
 - **next.config.ts** - Next.js configuration
 - **tsconfig.json** - TypeScript configuration with path aliases (`@/*` → `./src/*`)
-- **tailwind.config.js** - Tailwind CSS with custom theme
+- **src/app/globals.css** - Tailwind v4 theme config (`@theme inline { ... }`); this project has no `tailwind.config.js` — see [Story 1.2's implementation note](./_bmad-output/implementation-artifacts/story-1-2-configure-tailwind-css.md#implementation-note-no-tailwindconfigjs)
 - **eslint.config.mjs** - ESLint rules (Next.js + TypeScript)
 - **prettier.config.mjs** - Prettier formatting rules
 - **postcss.config.mjs** - PostCSS configuration for Tailwind
@@ -169,6 +170,8 @@ interface Artifact {
 - **ScrollTrigger:** For scroll-based animations
 - **Performance:** GPU acceleration with `will-change` and transforms
 - **Cleanup:** Proper GSAP context management for component unmounting
+- **Setup:** `gsap`, `ScrollTrigger`, and the `useGSAP` hook (`@gsap/react`) are registered once in `src/lib/gsap-utils.ts` — always import them from there, not directly from `gsap`/`@gsap/react`
+- **Reference:** See [`docs/gsap-performance.md`](./docs/gsap-performance.md) for the full performance/usage guide, and visit `/gsap-demo` in dev for a working ScrollTrigger example (`src/components/gsap-scroll-demo/index.tsx`)
 
 ## 🧪 Development Workflow
 
@@ -198,6 +201,7 @@ Ensure the platform supports:
 
 - **[EPICS_AND_STORIES.md](./EPICS_AND_STORIES.md)** - Detailed project specifications and user stories
 - **[AGENTS.md](./AGENTS.md)** - AI agent development guidelines
+- **[docs/gsap-performance.md](./docs/gsap-performance.md)** - GSAP setup, context management, and performance guidelines
 - **[Next.js Docs](https://nextjs.org/docs)** - Framework documentation
 - **[Tailwind CSS Docs](https://tailwindcss.com/docs)** - Styling documentation
 - **[GSAP Docs](https://greensock.com/docs/)** - Animation documentation
