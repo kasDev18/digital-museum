@@ -1,5 +1,5 @@
 @reference "tailwindcss";
-@reference '../../app/globals.css';
+@reference '../../../../app/globals.css';
 
 .GsapScrollDemo {
     @apply flex flex-col gap-24 px-8 py-32;

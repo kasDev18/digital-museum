@@ -1,4 +1,4 @@
-import { GsapScrollDemo } from '@/components/gsap-scroll-demo'
+import { GsapScrollDemo } from './components/gsap-scroll-demo'
 
 export default function GsapDemoPage() {
   return (
