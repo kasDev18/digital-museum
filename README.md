@@ -7,11 +7,13 @@ A modern digital museum experience showcasing cultural artifacts with rich multi
 ## 🌟 Project Overview
 
 Artifacta is a digital museum platform that presents cultural artifacts through:
+
 - **Landing Page** - Immersive introduction with smooth animations
 - **List Page** - Browseable gallery with category filtering and multiple view modes
 - **Detail Page** - Rich artifact presentations with audio, PDFs, migration journeys, and contributor stories
 
 The application focuses on the migration narratives behind cultural objects, featuring:
+
 - 12 curated artifacts from diverse cultures
 - 7 categories: Architectural, Ceremonial, Decorative, Musical, Playful, Useable, Wearable
 - Migration journey visualizations showing artifact movement across countries
@@ -40,12 +42,14 @@ Before running this project, ensure you have:
 ## 🚀 Setup Instructions
 
 1. **Clone the repository**
+
    ```bash
    git clone <repository-url>
    cd digital-museum
    ```
 
 2. **Install dependencies**
+
    ```bash
    pnpm install
    ```
@@ -103,11 +107,11 @@ digital-museum/
 │   ├── components/              # Components shared across more than one page
 │   │   ├── layout/               # Shared chrome (SiteHeader, SiteFooter — Story 1.7)
 │   │   └── ui/                   # Shared, page-agnostic primitives (buttons, icons, etc.)
-│   ├── data/                    # Mock data (e.g. `mock-data.ts` — Story 1.5)
+│   ├── data/                    # Mock data — `mock-data.ts` (Story 1.5): 12 artifacts
 │   ├── lib/                     # Shared utilities: gsap-utils.ts, utils.ts, data-utils.ts (Story 1.5)
-│   └── types/                   # Shared TypeScript interfaces (e.g. `artifact.ts` — Story 1.5)
+│   └── types/                   # Shared TypeScript interfaces — `artifact.ts` (Story 1.5)
 ├── public/                      # Static assets, organized by type
-│   ├── images/                  # Photography/artwork (artifact imagery — Story 1.5+)
+│   ├── images/                  # Photography/artwork (artifact imagery — referenced by mock data, added in a later story)
 │   └── assets/                  # Icons and other non-photographic static assets
 ├── docs/                        # Additional documentation (e.g. GSAP performance guide)
 ├── .github/                     # GitHub workflows and configurations
@@ -135,17 +139,20 @@ digital-museum/
 ## 🎨 Design System
 
 ### Color Palette
+
 - **Primary:** Dark navy background (`#1a2744` range)
 - **Secondary:** Cream/off-white foreground
 - **Accents:** Warm tones from artifact photography
 - **Theme:** Dark/light mode support with class-based switching
 
 ### Typography
+
 - **Display/Headings:** Patua One (Google Fonts)
 - **Body/Serif:** Playfair Display (Google Fonts)
 - **Font Utilities:** `font-display`, `font-serif` in Tailwind
 
 ### Component Architecture
+
 - Shared header/footer chrome with logo and theme controls
 - Reusable UI components in `/components/ui`
 - Feature-specific components organized by page
@@ -166,26 +173,39 @@ Artifacts follow this TypeScript interface:
 
 ```typescript
 interface Artifact {
-  id: string;
-  title: string;
-  type: 'Architectural' | 'Ceremonial' | 'Decorative' | 'Musical' | 'Playful' | 'Useable' | 'Wearable';
-  thumbnail: string;
-  media: string[];
-  description: string;
+  id: string
+  title: string
+  type:
+    'Architectural' | 'Ceremonial' | 'Decorative' | 'Musical' | 'Playful' | 'Useable' | 'Wearable'
+  thumbnail: string
+  media: string[]
+  description: string
   contributor?: {
-    name: string;
-    quote: string;
-    story?: string;
-  };
-  audioUrl?: string | null;
-  audioDurationSeconds?: number;
-  pdfUrl?: string | null;
+    name: string
+    quote: string
+    story?: string
+  }
+  audioUrl: string | null
+  audioDurationSeconds?: number
+  pdfUrl: string | null
   journey?: {
-    country: string;
-    flag: string;
-  }[];
+    country: string
+    flag: string
+  }[]
 }
 ```
+
+The 7 categories live in a single source of truth, `ARTIFACT_TYPES` (`src/types/artifact.ts`), and `ArtifactType` is derived from it (`(typeof ARTIFACT_TYPES)[number]`) — adding an 8th category later is a one-line change instead of updating a union type in multiple places.
+
+### Mock Data & Data Utilities
+
+- **`src/data/mock-data.ts`** exports `mockArtifacts`: all 12 real artifacts from the Figma board (Wooden Chest, Vyshyvanka, Carnival Mask, Beaded Gown, Mshatta Façade, Lei Po'o, Tatreez Thobe, Mbira, Minbar, Bamboo Pen, Backgammon Board, Jamdani), covering all 7 categories.
+- **`src/lib/data-utils.ts`** exposes the functions pages/components should use instead of importing `mockArtifacts` directly:
+  - `getAllArtifacts()` — every artifact.
+  - `getArtifactById(id)` — a single artifact, or `undefined` if not found.
+  - `getArtifactsByType(type = "All Objects")` — filters by category; the default (or the `ALL_OBJECTS_FILTER` sentinel) returns everything, matching the list page's "no filter" state (Story 4.2).
+  - `getArtifactCategories()` — `["All Objects", ...ARTIFACT_TYPES]` (also exported as the `ARTIFACT_CATEGORIES` constant), ready to render the category filter bar.
+- `audioUrl`/`pdfUrl` are non-optional in the `Artifact` type — always a path or explicit `null`, never omitted — so consuming UI can check them directly without an `in` guard; `journey` and `contributor` are populated on all 12 artifacts in this dataset.
 
 ## 🎬 Animation Strategy
 
@@ -207,6 +227,7 @@ interface Artifact {
 ## 🚢 Deployment
 
 ### Vercel (Recommended)
+
 1. Connect your GitHub repository to Vercel
 2. Vercel will automatically detect Next.js
 3. Configure build settings:
@@ -215,7 +236,9 @@ interface Artifact {
    - **Install Command:** `pnpm install`
 
 ### Other Platforms
+
 Ensure the platform supports:
+
 - Node.js 20+
 - pnpm or convert to npm/yarn
 - Static site generation or server-side rendering
