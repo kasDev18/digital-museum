@@ -1,26 +1,41 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Figma "Ion Oval Zip Legend" palette (dark theme, default) */
+  --navy-900: #253143;
+  --navy-800: #2f3c52;
+  --cream-100: #efebe5;
+  --cream-200: #cfc9be;
+
+  --background: var(--navy-900);
+  --background-elevated: var(--navy-800);
+  --foreground: var(--cream-100);
+  --foreground-muted: var(--cream-200);
+}
+
+/* Light theme variant, toggled via the header/footer theme switch (Story 1.7) */
+:root.light {
+  --background: var(--cream-100);
+  --background-elevated: #e3ddd0;
+  --foreground: var(--navy-900);
+  --foreground-muted: #4d5a70;
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-background-elevated: var(--background-elevated);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-foreground-muted: var(--foreground-muted);
+  --color-navy: var(--navy-900);
+  --color-navy-elevated: var(--navy-800);
+  --color-cream: var(--cream-100);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-display: var(--font-patua-one);
+  --font-serif: var(--font-playfair-display);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-serif), Georgia, serif;
 }

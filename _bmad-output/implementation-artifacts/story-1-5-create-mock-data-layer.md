@@ -1,7 +1,7 @@
 # Story 1.5: Create Mock Data Layer
 
 **Epic:** Epic 1 - Project Setup  
-**Status:** Not Started  
+**Status:** Ready for Dev  
 **Priority:** High  
 **Story Points:** 3
 
