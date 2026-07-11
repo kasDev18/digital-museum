@@ -1,0 +1,14 @@
+@reference "tailwindcss";
+@reference '../../../app/globals.css';
+
+.SiteHeader {
+  @apply flex items-center justify-center px-6 py-5 sm:px-10;
+}
+
+.SiteHeader_link {
+  @apply flex items-center gap-2.5;
+}
+
+.SiteHeader_wordmark {
+  @apply h-6 w-auto;
+}

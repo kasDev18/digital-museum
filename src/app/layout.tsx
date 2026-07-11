@@ -1,4 +1,7 @@
 import type { Metadata } from 'next'
+import { SiteHeader } from '@/components/layout/site-header'
+import { SiteFooter } from '@/components/layout/site-footer'
+import { THEME_INIT_SCRIPT } from '@/lib/theme-script'
 import { patuaOne, playfairDisplay } from './fonts'
 import './globals.css'
 
@@ -17,8 +20,16 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${patuaOne.variable} ${playfairDisplay.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
-      <body className="flex min-h-full flex-col">{children}</body>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+      </head>
+      <body className="flex min-h-full flex-col">
+        <SiteHeader />
+        <div className="flex flex-1 flex-col">{children}</div>
+        <SiteFooter />
+      </body>
     </html>
   )
 }
