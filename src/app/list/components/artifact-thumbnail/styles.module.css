@@ -46,8 +46,13 @@
   @apply aspect-[10/7] w-full rounded-2xl;
 }
 
+/* 133x133px + 16px radius at the `lg` breakpoint per the Figma "Gallery"
+   list frame's own dev-mode export (`133px`/`border-radius: 16px`);
+   smaller steps below scale down proportionally, same convention as the
+   grid variant's own sizing comment above. Overrides the shared
+   `rounded-lg` via the descendant selector's higher specificity. */
 .ArtifactThumbnail_list .ArtifactThumbnail_imageWrap {
-  @apply h-16 w-16 sm:h-20 sm:w-20;
+  @apply h-20 w-20 rounded-2xl sm:h-24 sm:w-24 lg:h-[133px] lg:w-[133px];
 }
 
 .ArtifactThumbnail_image {
@@ -113,16 +118,20 @@
   }
 }
 
+/* 41px/55px (font-size/line-height) per the Figma list frame's dev-mode
+   export at the `lg` breakpoint (font-weight 400, same as the grid
+   variant's own title); smaller steps below scale down proportionally. */
 .ArtifactThumbnail_list .ArtifactThumbnail_title {
-  @apply flex-1 text-lg sm:text-xl;
+  @apply flex-1 text-xl font-normal sm:text-2xl lg:text-[2.5625rem] lg:leading-[3.4375rem];
 }
 
 /* The list variant's second, explicitly-focusable target (per its AC).
    `position: relative` + `z-index` puts it above the stretched full-row
    link exactly where their hit areas overlap, so it — not the row-wide
-   link — receives the click/focus in that region. */
+   link — receives the click/focus in that region. 14px/19px + medium
+   weight per the Figma list frame's own "Explore Story" spec. */
 .ArtifactThumbnail_explore {
-  @apply text-foreground-muted relative z-10 flex shrink-0 items-center gap-2 text-xs transition-colors sm:text-sm;
+  @apply text-foreground-muted relative z-10 flex shrink-0 items-center gap-2.5 text-sm font-medium transition-colors;
 }
 
 .ArtifactThumbnail_explore:hover,
@@ -130,8 +139,9 @@
   @apply text-foreground;
 }
 
+/* 17x17px per the Figma list frame's "Vector" glyph spec. */
 .ArtifactThumbnail_exploreIcon {
-  @apply h-6 w-6 shrink-0 transition-transform duration-200;
+  @apply h-[17px] w-[17px] shrink-0 transition-transform duration-200;
 }
 
 .ArtifactThumbnail_explore:hover .ArtifactThumbnail_exploreIcon,

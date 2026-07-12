@@ -1,6 +1,14 @@
 @reference "tailwindcss";
 @reference '../../../globals.css';
 
+/* Top clearance matches `ArtifactGridRow_first`'s own reserved space
+   (Story 3.2 — a placeholder for the not-yet-built category filter bar,
+   Story 4.2) so toggling `ViewSwitcher` (Story 3.4) between Grid and List
+   doesn't visibly jump the content up/down by that reserved amount.
+   `max-w-6xl` (not the Figma list frame's literal 1728px canvas width,
+   which is a fixed desktop-only reference) gives the 133px-at-`lg`
+   thumbnail and 41px-at-`lg` title room to breathe without titles
+   wrapping awkwardly against the "Explore Story" link. */
 .ArtifactList {
-  @apply mx-auto flex w-full max-w-3xl list-none flex-col px-6 sm:px-10;
+  @apply mx-auto flex w-full max-w-6xl list-none flex-col px-6 pt-14 sm:px-10 lg:pt-36;
 }

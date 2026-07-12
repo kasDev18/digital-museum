@@ -26,10 +26,9 @@ export interface ArtifactThumbnailProps {
  * Thumbnail used by both the Grid and List views of the List page (Epic 3;
  * both views render from the same page/route, switched via view-mode state
  * in Story 3.4 — not separate route segments — hence living under this
- * page's own `app/list/components/`). Routes to `/detail/[id]` (Story 3.5
- * builds that route out; until then Next's built-in not-found page serves
- * as the "or placeholder" fallback called out in the story's acceptance
- * criteria).
+ * page's own `app/list/components/`). Routes to `/detail/[id]`, built out
+ * by Story 3.5 as a real (if minimal) placeholder page; an unknown id
+ * falls through to the site's own chrome-complete `app/not-found.tsx`.
  */
 export function ArtifactThumbnail({
   artifact,

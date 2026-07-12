@@ -1,0 +1,27 @@
+@reference "tailwindcss";
+@reference './globals.css';
+
+.NotFound {
+  @apply mx-auto flex min-h-screen w-full max-w-lg flex-col items-center gap-4 px-6 pt-24 pb-24 text-center sm:pt-28 sm:pb-28;
+}
+
+.NotFound_eyebrow {
+  @apply text-foreground-muted font-display text-sm tracking-[0.3em];
+}
+
+.NotFound_title {
+  @apply text-foreground font-serif text-2xl sm:text-3xl;
+}
+
+.NotFound_message {
+  @apply text-foreground-muted font-serif text-base sm:text-lg;
+}
+
+/* `border-navy/10` keeps this cream button's edge visible in the light
+   theme, where the page background is also cream and would otherwise
+   nearly swallow it — same fix applied to `ViewSwitcher`'s own cream
+   indicator circle (Story 3.4), confirmed via a direct light-theme
+   screenshot of this page. */
+.NotFound_link {
+  @apply bg-cream text-navy border-navy/10 hover:bg-cream/90 focus-visible:outline-navy font-display mt-2 inline-flex h-[50px] items-center justify-center rounded-full border px-10 text-[0.9375rem] leading-[1.125rem] font-normal transition hover:scale-[1.04] focus-visible:outline-2 focus-visible:outline-offset-4 active:scale-[0.97];
+}

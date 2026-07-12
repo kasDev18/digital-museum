@@ -118,6 +118,76 @@ export function ExploreStoryArrowIcon(props: SVGProps<SVGSVGElement>) {
   )
 }
 
+/**
+ * `viewBox="0 0 20 20"` + `strokeWidth="1.5"` (not this file's usual 40-unit
+ * viewBox convention) so it renders pixel-for-pixel at `ViewSwitcher`'s own
+ * 20x20 spec size without the stroke thinning out — this and
+ * `ListViewIcon` below are only ever used at that one fixed size.
+ */
+export function GridViewIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <rect x="3" y="3" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
+      <rect x="11" y="3" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
+      <rect x="3" y="11" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
+      <rect x="11" y="11" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
+    </svg>
+  )
+}
+
+export function ListViewIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <rect x="2.5" y="3" width="5" height="5" rx="1" stroke="currentColor" strokeWidth="1.5" />
+      <path
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeWidth="1.5"
+        d="M11 4.5h6.5M11 7.5h4"
+      />
+      <rect x="2.5" y="12" width="5" height="5" rx="1" stroke="currentColor" strokeWidth="1.5" />
+      <path
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeWidth="1.5"
+        d="M11 12.5h6.5M11 15.5h4"
+      />
+    </svg>
+  )
+}
+
+export function BackArrowIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+        d="M19 12H5m0 0 6-6m-6 6 6 6"
+      />
+    </svg>
+  )
+}
+
 /** Vector wordmark logotype (Figma export) — decorative; pair with visible or `sr-only` "Artifacta" text for the accessible name. */
 export function ArtifactaWordmark(props: SVGProps<SVGSVGElement>) {
   return (

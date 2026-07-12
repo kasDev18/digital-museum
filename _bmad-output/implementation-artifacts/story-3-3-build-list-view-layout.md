@@ -1,7 +1,7 @@
 # Story 3.3: Build List View Layout
 
 **Epic:** Epic 3 - List Page Foundation  
-**Status:** In Progress  
+**Status:** Done  
 **Priority:** High  
 **Story Points:** 2
 
@@ -70,7 +70,7 @@
 - Built `ArtifactList` at `src/app/list/components/artifact-list/`: a `<ul>` of `ArtifactThumbnail` (`variant="list"`, Story 3.1) rows, each with its own divider rule (`ArtifactThumbnail_list`'s `border-b`, already built in Story 3.1) and a data-driven `getAllArtifacts()` source, with the same shared `ListEmptyState` fallback used by `ArtifactGrid` (Story 3.2) when the array is empty.
 - No overflow container or drag/pan logic — the list scrolls with the page's own native scroll, per this story's "standard scrollable container" Technical Note; this is the same native-scroll mechanism the Grid view's _vertical_ dimension relies on (only Grid's horizontal axis gets its own scoped `overflow-x` box, since only it needs to be "oversized").
 - The first row's thumbnail is marked `priority` (it's reliably above-the-fold in a single-column vertical list, unlike Grid's breakpoint-dependent layout).
-- **Not yet wired into the `/list` route** — `page.tsx` renders `ArtifactGrid` by default (matching `Gallery.png`'s primary desktop mockup); this component was verified by temporarily rendering it from `page.tsx` during development (screenshots at mobile/tablet/desktop, a Playwright keyboard-navigation check confirming exactly one focusable "Explore Story" link per row, and an empty-state check), then reverted. It's ready for Story 3.4 to render conditionally via its `ViewMode` client state and pill toggle.
+- **Wired into the `/list` route by Story 3.4** — at the time this story shipped, `page.tsx` still rendered `ArtifactGrid` by default (matching `Gallery.png`'s primary desktop mockup), and this component was verified by temporarily rendering it from `page.tsx` during development (screenshots at mobile/tablet/desktop, a Playwright keyboard-navigation check confirming exactly one focusable "Explore Story" link per row, and an empty-state check), then reverted. Story 3.4's `ListPageContent` now renders it conditionally via its `ViewMode` client state and pill toggle, as originally planned.
 - Verified manually (no test framework in this repo — see Story 3.1's precedent): Playwright screenshots across breakpoints, `console --errors` (only Story 1.5's expected placeholder-image 400s), and a keyboard tab-order check.
 
 ### Review Findings
@@ -85,3 +85,7 @@
 ## Exit Animation Added (2026-07-12)
 
 `ArtifactList` also uses the new `useExitFadeNavigation` hook (see Story 3.2's own entry for the same date — the correctness pitfall documented there, `onClick` vs `onClickCapture`, applies identically here). Wired to the `<ul>`'s `onClickCapture`. Verified for both of a List row's overlapping link targets (the "Explore Story" link and its stretched full-row sibling, Story 3.1) via a temporary swap into `page.tsx` — both correctly trigger the fade-out-then-navigate sequence, confirmed via URL polling at 200ms intervals rather than a single end-state check.
+
+## Sizing Corrected to Match Figma Spec (2026-07-13)
+
+Once Story 3.4 made this view reachable from the running app for the first time, side-by-side comparison against the Figma list frame's dev-mode export showed the row thumbnail/title were noticeably under-scaled versus spec — `ArtifactThumbnail_list`'s image was capped at 64–80px (vs. the frame's 133px) and its title topped out at `text-xl` (20px, vs. the frame's 41px/55px). Corrected in `artifact-thumbnail/styles.module.css`: the image now scales up to 133x133px with a 16px radius at the `lg` breakpoint, the title scales up to 41px/55px, the "Explore Story" text picked up its spec'd medium weight, and its arrow icon was resized from 24px down to the spec's 17px. `ArtifactList`'s own container widened from `max-w-3xl` (768px) to `max-w-6xl` (1152px) so the larger title text has room before wrapping against the "Explore Story" link — not the frame's literal 1728px canvas width, which is a fixed desktop-only reference, not a responsive target. Verified via Playwright screenshots at 1440px/1920px.

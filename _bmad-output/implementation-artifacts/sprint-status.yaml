@@ -1,5 +1,5 @@
 # generated: 2026-07-11
-# last_updated: 2026-07-12 (Stories 3.2, 3.3 implemented this pass)
+# last_updated: 2026-07-12 (Stories 3.3 reconciled to done, 3.4 & 3.5 implemented this pass — Epic 3 complete)
 # project: digital-museum
 # project_key: NOKEY
 # tracking_system: file-system
@@ -9,7 +9,7 @@
 # readiness: IN PROGRESS - Epic 1 partially complete
 # architectural_decision: Next.js (App Router) + Tailwind CSS + GSAP for animations, no backend/CMS required, mock data-driven content
 # NOTE: This is a technical assessment project with a 4-day deadline (July 15, 2026). Required scope = Epics 1-4 + 6 (Landing Page + List Page + QA). Epic 5 (Details Page) is stretch scope only if time permits.
-# CURRENT STATUS: Epic 1 complete (all 7 stories done). Epic 2 complete - all 5 stories (2.1-2.5) done. Epic 3 in progress - Stories 3.1-3.3 done, Stories 3.4-3.5 ready for dev
+# CURRENT STATUS: Epic 1 complete (all 7 stories done). Epic 2 complete - all 5 stories (2.1-2.5) done. Epic 3 complete - all 5 stories (3.1-3.5) done. Epic 4 next.
 
 # STATUS DEFINITIONS:
 # ==================
@@ -80,12 +80,12 @@ development_status:
   # Stories: 5 │ Priority: High │ Required Scope
   # Dual view modes (Grid/List), data-driven components, view switcher
   # ─────────────────────────────────────────────────────────────────────────
-  epic-3: in-progress
+  epic-3: done
   3-1-create-artifact-thumbnail-component: done
   3-2-build-grid-view-layout: done
-  3-3-build-list-view-layout: in-progress
-  3-4-implement-view-switcher-toggle: backlog
-  3-5-wire-thumbnail-navigation-to-detail-page: backlog
+  3-3-build-list-view-layout: done
+  3-4-implement-view-switcher-toggle: done
+  3-5-wire-thumbnail-navigation-to-detail-page: done
   epic-3-retrospective: optional
 
   # ─────────────────────────────────────────────────────────────────────────
@@ -156,18 +156,17 @@ development_status:
 #     route has no page yet — Epic 3 scope, see deferred-work.md)
 #   - Story 2.5: Responsive Polish for Landing Page ✅
 #
-# Epic 3 Progress: 3/5 stories complete (60%)
+# Epic 3 Progress: 5/5 stories complete (100%) — DONE
 # Completed Stories:
 #   - Story 3.1: Create Artifact Thumbnail Component ✅
 #   - Story 3.2: Build Grid View Layout ✅
-#   - Story 3.3: Build List View Layout ✅ (component built and verified; not yet
-#     wired into the route — Story 3.4's view-switcher toggle does that)
-# Ready for Dev (story file drafted, implementation not started):
-#   - Story 3.4: Implement View Switcher Toggle ⏳
-#   - Story 3.5: Wire Thumbnail Navigation to Detail Page ⏳ (mostly satisfied
-#     already by Story 3.1's ArtifactThumbnail; see that story's Implementation
-#     Summary)
+#   - Story 3.3: Build List View Layout ✅ (wired into the route by Story 3.4)
+#   - Story 3.4: Implement View Switcher Toggle ✅ (ViewSwitcher pill +
+#     ListPageContent client-state wrapper; switches Grid/List with a
+#     crossfade transition)
+#   - Story 3.5: Wire Thumbnail Navigation to Detail Page ✅ (built
+#     `/detail/[id]` placeholder page + site-chrome `not-found.tsx`)
 #
-# Overall Project Progress: 15/38 stories complete (39.5%)
-# Remaining Work: 23 stories (60.5%)
-# Estimated Completion: Epic 3 nearly done; continue with Stories 3.4-3.5
+# Overall Project Progress: 17/38 stories complete (44.7%)
+# Remaining Work: 21 stories (55.3%)
+# Estimated Completion: Epic 3 done; continue with Epic 4 (List Page Interaction)
