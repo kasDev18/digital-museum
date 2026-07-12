@@ -1,0 +1,11 @@
+@reference "tailwindcss";
+@reference '../../app/globals.css';
+
+/* SiteHeader/SiteFooter (Story 1.7) are `fixed` overlays that don't reserve
+   document flow space, so this top-level page container supplies its own
+   clearance — same approach as `LandingHero`'s `py-16 sm:py-20`, growing
+   top and bottom together at the `sm:` breakpoint rather than trading one
+   off against the other. */
+.ListPage {
+  @apply min-h-screen pt-24 pb-24 sm:pt-28 sm:pb-28;
+}

@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation'
 import { useRef, type MouseEvent } from 'react'
 import { gsap, useGSAP } from '@/lib/gsap-utils'
 import styles from './styles.module.css'
-import { LandingHeroDisc } from '../landing-hero-disc'
-import { LandingHeroContentReveal } from '../landing-hero-content-reveal'
+import { LandingHeroDisc } from './components/landing-hero-disc'
+import { LandingHeroContentReveal } from './components/landing-hero-content-reveal'
 
 const EXPLORE_HREF = '/list'
 
