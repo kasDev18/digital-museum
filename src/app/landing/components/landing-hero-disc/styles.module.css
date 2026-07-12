@@ -1,0 +1,28 @@
+@reference "tailwindcss";
+@reference '../../../globals.css';
+
+.LandingHeroDisc {
+    /* Sized so the disc's empty center (≈44.4% of this width — fixed by the
+     source artwork's ring geometry, see landing-hero/index.tsx) stays
+     comfortably wider than the 384px title block at every breakpoint's
+     headline size, instead of the rings crowding right up against the text. */
+    @apply pointer-events-none absolute top-1/2 left-1/2 aspect-[1379/1393] w-[760px] -translate-x-1/2 -translate-y-1/2 sm:w-[880px] md:w-[980px] lg:w-[1100px] xl:w-[1220px];
+}
+
+.LandingHeroDisc_group {
+    /* will-change-transform is warranted here (not just for an animation's
+     duration, per docs/gsap-performance.md) because this rotation runs
+     continuously (repeat: -1, gated only by prefers-reduced-motion) for as
+     long as the hero is mounted, rather than firing once and settling. */
+    @apply absolute will-change-transform;
+    /* drop-shadow (not box-shadow) so the shadow follows each arc's own
+     silhouette instead of its rectangular bounding box. The alpha channel
+     is a CSS custom property so LandingHeroDisc can fade it in with GSAP;
+     it defaults to fully transparent so the shadow stays invisible until
+     JS explicitly sets it (and never appears at all if JS fails to load). */
+    filter: drop-shadow(6px 22px 26px rgb(0 0 0 / var(--disc-shadow-opacity, 0)));
+}
+
+.LandingHeroDisc_ring {
+    @apply object-contain;
+}

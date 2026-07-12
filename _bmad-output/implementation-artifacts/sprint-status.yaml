@@ -69,7 +69,7 @@ development_status:
   # ─────────────────────────────────────────────────────────────────────────
   epic-2: in-progress
   2-1-build-landing-page-static-layout: done
-  2-2-implement-background-disc-animation: ready-for-dev
+  2-2-implement-background-disc-animation: done
   2-3-add-scroll-based-content-animations: ready-for-dev
   2-4-wire-cta-navigation-to-list-page: ready-for-dev
   2-5-responsive-polish-for-landing-page: ready-for-dev
@@ -147,15 +147,15 @@ development_status:
 #   - Story 1.6: Create README Skeleton ✅
 #   - Story 1.7: Build Shared Header & Footer Chrome ✅
 #
-# Epic 2 Progress: 1/5 stories complete (20%)
+# Epic 2 Progress: 2/5 stories complete (40%)
 # Completed Stories:
 #   - Story 2.1: Build Landing Page Static Layout ✅
+#   - Story 2.2: Implement Background Disc Animation ✅
 # Ready for Dev (story file drafted, implementation not started):
-#   - Story 2.2: Implement Background Disc Animation ⏳
 #   - Story 2.3: Add Scroll-Based Content Animations ⏳
 #   - Story 2.4: Wire CTA Navigation to List Page ⏳
 #   - Story 2.5: Responsive Polish for Landing Page ⏳
 #
-# Overall Project Progress: 8/38 stories complete (21.1%)
-# Remaining Work: 30 stories (78.9%)
+# Overall Project Progress: 9/38 stories complete (23.7%)
+# Remaining Work: 29 stories (76.3%)
 # Estimated Completion: Epic 2 should be completed before moving to Epic 3

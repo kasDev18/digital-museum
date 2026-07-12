@@ -5,22 +5,6 @@
   @apply relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 py-16 text-center sm:py-20;
 }
 
-.LandingHero_disc {
-  /* Sized so the disc's empty center (≈44.4% of this width — fixed by the
-     source artwork's ring geometry, see landing-hero/index.tsx) stays
-     comfortably wider than the 384px title block at every breakpoint's
-     headline size, instead of the rings crowding right up against the text. */
-  @apply pointer-events-none absolute top-1/2 left-1/2 aspect-[1379/1393] w-[760px] -translate-x-1/2 -translate-y-1/2 sm:w-[880px] md:w-[980px] lg:w-[1100px] xl:w-[1220px];
-}
-
-.LandingHero_discGroup {
-  @apply absolute;
-}
-
-.LandingHero_discRing {
-  @apply object-contain;
-}
-
 .LandingHero_content {
   /* Figma "intro TXT layout": column, centered, 30px gap between the title
      block and the CTA. */

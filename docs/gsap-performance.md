@@ -64,6 +64,13 @@ Leaving it on too many elements (or permanently) increases GPU memory
 pressure and can hurt performance instead of helping it. The demo component
 (`GsapScrollDemo`) applies it directly to the animated panels as an example.
 
+For an element that animates continuously for its entire mounted lifetime
+(e.g. an infinite `repeat: -1` ambient loop, not a one-off entrance
+animation), it's reasonable to apply `will-change-transform` permanently in
+its CSS Module rather than toggling it at animation start/end — there's no
+"idle" period to remove the hint during. `LandingHeroDisc` (Story 2.2, the
+landing page's rotating background disc) is an example of this variant.
+
 ## Reduced motion
 
 Gate scroll/entrance animations behind `prefers-reduced-motion` using
