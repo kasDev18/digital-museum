@@ -29,26 +29,45 @@
   @apply flex w-full max-w-[384px] flex-col items-center gap-[25px];
 }
 
+/* All three rules below use rem, not raw px, for every arbitrary
+   font-size/line-height value (including at the lg breakpoint, which used
+   to hardcode px) — rem keeps them scaling with the footer's A+/A-
+   font-size control (`--font-scale` on `html`, Story 1.7) at every
+   breakpoint, matching Figma's px specs exactly at the default 16px root. */
+
 .LandingHero_headline {
   /* font-family/line-height ratio (62/57) per Figma; font-size steps up
-     monotonically to the exact 57px spec value at the lg breakpoint (the
-     desktop primary-fidelity target). Each manually-broken line gets
-     `whitespace-nowrap` because "Objects, Voices" measures a few px wider
-     than the 384px title block in Chromium's Playfair Display metrics
-     (Figma's own renderer fits it) — without it, that line wraps again and
-     turns 3 lines into 4. */
-  @apply text-foreground font-serif text-[1.75rem] leading-[1.088] whitespace-nowrap sm:text-4xl md:text-[2.875rem] lg:text-[57px];
+     monotonically to the exact 57px (3.5625rem) spec value at the lg
+     breakpoint (the desktop primary-fidelity target). Each manually-broken
+     line gets `whitespace-nowrap` because "Objects, Voices" measures a few
+     px wider than the 384px title block in Chromium's Playfair Display
+     metrics (Figma's own renderer fits it) — without it, that line wraps
+     again and turns 3 lines into 4. */
+  @apply text-foreground font-serif text-[1.75rem] leading-[1.088] whitespace-nowrap sm:text-4xl md:text-[2.875rem] lg:text-[3.5625rem];
 }
 
 .LandingHero_subtext {
-  /* font-size/line-height (17px/28px) per Figma at the lg breakpoint;
-     smaller steps below it scale down monotonically (this used to peak at
-     sm/md and shrink again at lg, which was backwards). */
-  @apply text-foreground-muted font-serif text-sm leading-[1.647] sm:text-base lg:text-[17px];
+  /* font-size/line-height (17px/28px = 1.0625rem/28px) per Figma at the lg
+     breakpoint; smaller steps below it scale down monotonically (this used
+     to peak at sm/md and shrink again at lg, which was backwards). */
+  @apply text-foreground-muted font-serif text-sm leading-[1.647] sm:text-base lg:text-[1.0625rem];
 }
 
 .LandingHero_cta {
   /* Figma CTA: 0px/40px padding, hug-content width, 50px height, cream fill,
-     Patua One 15px/18px regular weight, dark navy text. */
-  @apply bg-cream text-navy hover:bg-cream/90 font-display inline-flex h-[50px] items-center justify-center rounded-full px-10 text-[15px] leading-[18px] font-normal transition-colors;
+     Patua One 15px/18px (0.9375rem/1.125rem) regular weight, dark navy
+     text. Focus-visible outline follows the same pattern as
+     `ArtifactThumbnail` (Story 3.1), colored to contrast against this
+     button's own cream fill rather than the page background behind it.
+     Hover/active use a CSS transform (scale), not GSAP, matching this
+     codebase's convention of plain CSS transitions for simple hover
+     micro-interactions (see `ArtifactThumbnail_grid:hover` scaling its
+     image) — GSAP is reserved for the entrance/exit sequences in
+     `LandingHeroContentReveal`/`LandingHero`. `transition` (not just
+     `transition-colors`) is required so the `scale` transform eases too;
+     this only works because the entrance reveal's tween clears its own
+     inline `transform`/`opacity` once done (see `clearProps` in
+     `landing-hero-content-reveal/index.tsx`) — otherwise that inline style
+     would permanently override this rule regardless of specificity. */
+  @apply bg-cream text-navy hover:bg-cream/90 hover:scale-[1.04] active:scale-[0.97] focus-visible:outline-navy font-display inline-flex h-[50px] items-center justify-center rounded-full px-10 text-[0.9375rem] leading-[1.125rem] font-normal transition focus-visible:outline-2 focus-visible:outline-offset-4;
 }
