@@ -238,6 +238,8 @@ interface Artifact {
 **I want to** see a subtle, continuous animation of the background disc graphic  
 **So that** the landing page feels dynamic and engaging
 
+**Correction from earlier draft:** Story 2.1 found the actual Figma exports are 3 texture-cluster groups (arcs of one material/pattern each — e.g. floral, blue-tile, stone), not full concentric rings as this story originally assumed from `DISC.png`. Re-slicing the exports into true rings was out of scope for the project deadline, so "each ring... rotates" below is implemented as each existing texture cluster rotating around the disc's shared center point (not its own off-center middle), so the assembled disc turns as one piece — using the assets as they exist, rather than literal concentric rings. The implementation currently rotates all three clusters at the same speed/direction rather than differentiating them per cluster, so the "creative differentiation" bullet below is only partially realized; see the story file's Implementation Notes.
+
 **Acceptance Criteria:**
 - [ ] Each concentric ring of the disc (per `DISC.png`, the graphic is built from 3+ nested arc-segment rings, not one flat orb) rotates continuously in a smooth loop
 - [ ] Creative differentiation: rings rotate at different speeds and/or opposing directions to create a layered, parallax-like sunburst effect (this is the "feel free to show us your creativity" moment called out in the brief)
