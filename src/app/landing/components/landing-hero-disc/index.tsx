@@ -147,7 +147,16 @@ export function LandingHeroDisc() {
   )
 
   return (
-    <div className={styles.LandingHeroDisc} aria-hidden="true" ref={container}>
+    <div
+      className={styles.LandingHeroDisc}
+      // Read by `LandingHero`'s click-triggered exit animation (a sibling
+      // component) to measure this disc's on-screen center/size, so each
+      // group below can be moved outward relative to the shared disc
+      // rather than just its own bounding box. Not used within this file.
+      data-disc
+      aria-hidden="true"
+      ref={container}
+    >
       {DISC_GROUPS.map((group, index) => (
         <div
           key={group.src}
