@@ -221,6 +221,14 @@ The 7 categories live in a single source of truth, `ARTIFACT_TYPES` (`src/types/
 - **Legibility scrim:** a soft radial gradient behind the text stack (`LandingHero_content::before`, driven by the theme `--background` variable) keeps the headline/subtext/CTA readable over the ring pattern at every breakpoint — most necessary on narrow mobile widths, where the disc's empty center is smaller than the text block. It's theme-aware and sized off the content box itself, not a fixed per-breakpoint value.
 - **CTA button:** renders as a styled, non-navigating `<button>` — wiring it to the List page (and its filled/outline hover states) is Story 2.4's scope, and the `/list` route has no page yet (Epic 3).
 
+### Artifact Thumbnail Component (Story 3.1)
+
+- **`src/app/list/components/artifact-thumbnail`** (`ArtifactThumbnail`) is the shared building block for the List page's Grid (Story 3.2) and List (Story 3.3) views — both view-modes of the single `/list` route (switched via Story 3.4's React state, not separate routes), which is why it's colocated under `app/list/` rather than `src/components/` per this file's own "page-specific vs. shared" convention.
+- **Props:** `artifact: Artifact`, `variant: 'grid' | 'list'`, plus optional `onClick(id)` (a side-effect hook that can't cancel navigation), `priority` (threaded to `next/image` for above-the-fold instances), and `className`.
+- **Grid variant** is a single `next/link` to `/detail/[id]` wrapping a square image + title caption. **List variant** renders the image/title plus a real, independently-focusable "Explore Story" link, with an additional invisible full-row "stretched link" sibling (`aria-hidden`, `tabIndex={-1}`) so the whole row is clickable too — without nesting an `<a>` inside an `<a>` (invalid HTML) and without giving keyboard/screen-reader users two competing links per row.
+- **Loading/error state:** a CSS checkerboard skeleton (matching the Figma `Thumbnail.png` export) shows until the image loads, and stays up on load error too — the mock dataset's `thumbnail` paths aren't backed by real files in `public/images` yet (Story 1.5), so every thumbnail currently renders this placeholder; see `_bmad-output/implementation-artifacts/deferred-work.md`.
+- **The `/detail/[id]` destination doesn't exist yet** (Story 3.5/Epic 5 build it out) — Next's built-in not-found page serves as the interim fallback when a thumbnail is clicked.
+
 ## 🎬 Animation Strategy
 
 - **GSAP Core:** For timeline-based animations

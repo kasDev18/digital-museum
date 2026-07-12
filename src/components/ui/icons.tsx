@@ -97,6 +97,27 @@ export function YoutubeIcon(props: SVGProps<SVGSVGElement>) {
   )
 }
 
+export function ExploreStoryArrowIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      viewBox="0 0 40 40"
+      fill="none"
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <circle cx="20" cy="20" r="15.25" stroke="currentColor" strokeWidth="1.5" />
+      <path
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.5"
+        d="M15.5 24.5 24.5 15.5m0 0h-6m6 0v6"
+      />
+    </svg>
+  )
+}
+
 /** Vector wordmark logotype (Figma export) — decorative; pair with visible or `sr-only` "Artifacta" text for the accessible name. */
 export function ArtifactaWordmark(props: SVGProps<SVGSVGElement>) {
   return (
