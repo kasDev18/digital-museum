@@ -1,0 +1,105 @@
+@reference "tailwindcss";
+@reference '../../../globals.css';
+
+.ArtifactThumbnail {
+  @apply focus-visible:outline-foreground rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4;
+}
+
+/* Grid variant (Story 3.2): column card — square image, caption below. The
+   whole card is a single `<Link>` (no second target needed per its AC). */
+.ArtifactThumbnail_grid {
+  @apply flex w-full flex-col gap-3;
+}
+
+.ArtifactThumbnail_grid:hover .ArtifactThumbnail_imageWrap,
+.ArtifactThumbnail_grid:focus-visible .ArtifactThumbnail_imageWrap {
+  @apply shadow-lg;
+}
+
+/* List variant (Story 3.3): row — small square thumbnail + title on the
+   left, "Explore Story" affordance on the right, rule below every row
+   (per THUMBNAILS.png). Positioned so the stretched full-row link
+   (`.ArtifactThumbnail_stretchedLink`) can be absolutely placed within it. */
+.ArtifactThumbnail_list {
+  @apply border-foreground-muted/15 hover:bg-background-elevated/60 relative flex w-full items-center gap-4 border-b py-4 transition-colors sm:gap-5;
+}
+
+.ArtifactThumbnail_imageWrap {
+  @apply bg-background-elevated relative isolate block aspect-square shrink-0 overflow-hidden rounded-lg shadow-none transition-shadow;
+}
+
+.ArtifactThumbnail_grid .ArtifactThumbnail_imageWrap {
+  @apply w-full;
+}
+
+.ArtifactThumbnail_list .ArtifactThumbnail_imageWrap {
+  @apply h-16 w-16 sm:h-20 sm:w-20;
+}
+
+.ArtifactThumbnail_image {
+  @apply h-full w-full object-cover transition-transform duration-300;
+}
+
+.ArtifactThumbnail_imageHidden {
+  /* Hides the native broken-image glyph a failed `<img>` can otherwise
+     paint underneath the translucent skeleton above it. */
+  @apply opacity-0;
+}
+
+.ArtifactThumbnail_grid:hover .ArtifactThumbnail_image,
+.ArtifactThumbnail_grid:focus-visible .ArtifactThumbnail_image {
+  @apply scale-105;
+}
+
+/* Checkerboard placeholder (per Thumbnail.png) shown until the image loads,
+   and left in place on error since the mock dataset's image paths aren't
+   backed by real files yet (see deferred-work.md). */
+.ArtifactThumbnail_skeleton {
+  @apply absolute inset-0 z-10;
+  background-image:
+    linear-gradient(45deg, var(--foreground-muted) 25%, transparent 25%),
+    linear-gradient(-45deg, var(--foreground-muted) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--foreground-muted) 75%),
+    linear-gradient(-45deg, transparent 75%, var(--foreground-muted) 75%);
+  background-size: 16px 16px;
+  background-position:
+    0 0,
+    0 8px,
+    8px -8px,
+    -8px 0;
+  opacity: 0.16;
+}
+
+.ArtifactThumbnail_title {
+  @apply text-foreground font-serif text-sm sm:text-base;
+}
+
+.ArtifactThumbnail_list .ArtifactThumbnail_title {
+  @apply flex-1 text-lg sm:text-xl;
+}
+
+/* The list variant's second, explicitly-focusable target (per its AC).
+   `position: relative` + `z-index` puts it above the stretched full-row
+   link exactly where their hit areas overlap, so it — not the row-wide
+   link — receives the click/focus in that region. */
+.ArtifactThumbnail_explore {
+  @apply text-foreground-muted relative z-10 flex shrink-0 items-center gap-2 text-xs transition-colors sm:text-sm;
+}
+
+.ArtifactThumbnail_explore:hover,
+.ArtifactThumbnail_explore:focus-visible {
+  @apply text-foreground;
+}
+
+.ArtifactThumbnail_exploreIcon {
+  @apply h-6 w-6 shrink-0 transition-transform duration-200;
+}
+
+.ArtifactThumbnail_explore:hover .ArtifactThumbnail_exploreIcon,
+.ArtifactThumbnail_explore:focus-visible .ArtifactThumbnail_exploreIcon {
+  @apply translate-x-0.5;
+}
+
+.ArtifactThumbnail_stretchedLink {
+  @apply absolute inset-0 z-0;
+}

@@ -2,6 +2,10 @@
 
 Findings from code review that are real but not actionable in the story that surfaced them — pre-existing patterns, out-of-scope items, or theoretical edge cases disproportionate to fix now.
 
+## Deferred from: code review of story-3-1 (2026-07-12)
+
+- **Clicking any thumbnail currently 404s to Next's bare, unstyled not-found page.** `ArtifactThumbnail` links every card/row to `/detail/[id]`, but that route doesn't exist yet — Next's default not-found page renders instead, with no site header/footer chrome, a jarring dead end for anyone who clicks before the Detail page exists. Real, but explicitly Story 3.5's charter ("Wire Thumbnail Navigation to Detail Page," whose own Technical Notes call out "Implement fallback if Detail page is not built") — not this story's scope to solve. A lightweight interim fix (a custom `not-found.tsx` with the site chrome) would be cheap if this needs to look better before Story 3.5/5.1 land.
+
 ## Deferred from: code review of story-2.2 (2026-07-12)
 
 - **`data-disc-group` index + string-selector scoping assumes a single mounted `LandingHero` instance.** `LandingHeroDisc` targets its animated groups via `gsap.to('[data-disc-group="${index}"]', ...)`, scoped only through `useGSAP`'s `{ scope: container }`. If `LandingHero` were ever mounted twice on the same page, both instances' `data-disc-group="0"` elements could be targeted by one tween set (or vice versa). Matches the identical string-selector pattern already established in `GsapScrollDemo` (Story 1.3); `LandingHero` currently has exactly one call site (`src/app/page.tsx`).
