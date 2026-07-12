@@ -2,6 +2,7 @@
 
 import { useRef, type ReactNode } from 'react'
 import { gsap, ScrollTrigger, useGSAP } from '@/lib/gsap-utils'
+import { dispatchLandingReveal } from '@/lib/landing-reveal'
 
 export function LandingHeroContentReveal({
   className,
@@ -16,8 +17,14 @@ export function LandingHeroContentReveal({
     () => {
       const mm = gsap.matchMedia()
 
-      // Under reduced motion this callback never runs at all, so the
-      // headline/subtext/CTA just render normally, always visible.
+      // Under reduced motion the headline/subtext/CTA just render normally,
+      // always visible — but header/footer (listening on the other side of
+      // `dispatchLandingReveal`) still need to know the hero has "arrived"
+      // so they don't stay hidden forever.
+      mm.add('(prefers-reduced-motion: reduce)', () => {
+        dispatchLandingReveal()
+      })
+
       mm.add('(prefers-reduced-motion: no-preference)', () => {
         // Reveal order matches DOM/markup order (headline, subtext, CTA in
         // `LandingHero`), same `data-*` targeting precedent as
@@ -31,7 +38,10 @@ export function LandingHeroContentReveal({
         // radial scrim paints from the container, and would otherwise
         // render solid before the text ever appears.
         gsap.set(container.current, { autoAlpha: 0 })
-        gsap.set(targets, { y: 28 })
+        // `filter: blur(0px)` (not `'none'`) as the starting value so GSAP
+        // has a concrete blur length to interpolate away from — animating
+        // straight from `'none'` can't be tweened smoothly.
+        gsap.set(targets, { y: 28, filter: 'blur(16px)' })
 
         // The hero fills the viewport on load, so this trigger's `start` is
         // already past on mount — that's intentional here, not the "already
@@ -56,6 +66,7 @@ export function LandingHeroContentReveal({
             gsap.to(targets, {
               autoAlpha: 1,
               y: 0,
+              filter: 'blur(0px)',
               duration: 0.9,
               ease: 'power2.out',
               // Headline -> subtext -> CTA stagger. Overall pacing (~3s to
@@ -64,6 +75,12 @@ export function LandingHeroContentReveal({
               // turn) has only turned a few imperceptible degrees by the
               // time the CTA finishes.
               delay: 1.6,
+              // Fires once this tween's own `delay` elapses and the
+              // headline actually starts blurring into view — the moment
+              // `SiteHeader`/`SiteFooter` should fade in and the hero's
+              // black backdrop should start clearing, not `onEnter` above
+              // (which fires immediately, before any of that is visible).
+              onStart: dispatchLandingReveal,
               stagger: 0.25,
               // Once revealed, drop the inline transform/opacity/visibility
               // this tween wrote so these elements go back to being fully
@@ -71,9 +88,9 @@ export function LandingHeroContentReveal({
               // outranks any later CSS rule on the same properties (e.g.
               // the CTA's `hover:scale-*` in styles.module.css) regardless
               // of specificity. Safe here because the end state (opacity 1,
-              // visible, no transform) already matches each element's
-              // un-animated CSS default.
-              clearProps: 'transform,opacity,visibility',
+              // visible, no transform, no blur) already matches each
+              // element's un-animated CSS default.
+              clearProps: 'transform,opacity,visibility,filter',
             })
           },
         })

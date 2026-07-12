@@ -1,3 +1,8 @@
+'use client'
+
+import { usePathname } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { subscribeToLandingReveal } from '@/lib/landing-reveal'
 import { CopyrightMark, XIcon, YoutubeIcon } from '@/components/ui/icons'
 import { ThemeFontControls } from './components/theme-font-controls'
 import styles from './styles.module.css'
@@ -8,8 +13,26 @@ const SOCIAL_LINKS = [
 ] as const
 
 export function SiteFooter() {
+  const pathname = usePathname()
+  const isLanding = pathname === '/'
+
+  // Mirrors `SiteHeader`: hidden until the landing hero reveal fires, always
+  // visible immediately on every other route. The top border (the two
+  // `SiteFooter_border*` spans below) shares this same flag, so it draws in
+  // from both edges toward the center in lockstep with the fade rather than
+  // just appearing as a static line the instant opacity hits 1.
+  const [revealed, setRevealed] = useState(!isLanding)
+
+  useEffect(() => {
+    if (revealed) return
+    return subscribeToLandingReveal(() => setRevealed(true))
+  }, [revealed])
+
   return (
-    <footer className={styles.SiteFooter}>
+    <footer data-revealed={revealed} className={styles.SiteFooter}>
+      <span className={styles.SiteFooter_borderLeft} aria-hidden="true" />
+      <span className={styles.SiteFooter_borderRight} aria-hidden="true" />
+
       <p className={styles.SiteFooter_copyright}>
         <CopyrightMark className={styles.SiteFooter_copyrightIcon} />
         <span className="sr-only">Copyright ©2025 Artifacta</span>
