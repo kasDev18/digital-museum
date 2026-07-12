@@ -1,7 +1,8 @@
 /**
  * The 7 real Figma-board categories. "All Objects" is a UI-level "no filter"
- * state (see `getArtifactsByType` in `lib/data-utils.ts`) and is intentionally
- * not part of this set — it is never a value stored on an artifact.
+ * state (see `filterArtifactsByType` in `lib/data-utils.ts`) and is
+ * intentionally not part of this set — it is never a value stored on an
+ * artifact.
  */
 export const ARTIFACT_TYPES = [
   'Architectural',

@@ -15,14 +15,15 @@
   @apply cursor-grabbing;
 }
 
-/* First row gets extra top clearance; the Figma frame reserves 330px here
-   (site header + the not-yet-built category filter bar, Story 4.2, both
-   visible in the frame's screenshot) — this uses a smaller placeholder
-   value stacked on top of `ListPage`'s own header-clearance padding, since
-   that filter-bar chrome doesn't exist yet. Last row gets extra bottom
+/* First row gets extra top clearance, stacked on top of `ListPage`'s own
+   `pt-24 sm:pt-28` header-clearance padding, so the row's cards clear the
+   fixed `CategoryFilter` bar (Story 4.2) that now floats in that same
+   header-clearance zone (`top-20 sm:top-24`, ~48px tall) rather than the
+   Figma frame's literal 330px (that figure bakes in extra whitespace this
+   reference-based padding doesn't need). Last row gets extra bottom
    clearance before the fixed footer, matching the frame's 150px. */
 .ArtifactGridRow_first {
-  @apply pt-14 lg:pt-36;
+  @apply pt-16 lg:pt-20;
 }
 
 .ArtifactGridRow_last {
