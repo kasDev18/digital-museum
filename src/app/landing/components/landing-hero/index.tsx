@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useRef, type MouseEvent } from 'react'
 import { gsap, useGSAP } from '@/lib/gsap-utils'
+import { subscribeToLandingReveal } from '@/lib/landing-reveal'
 import styles from './styles.module.css'
 import { LandingHeroDisc } from './components/landing-hero-disc'
 import { LandingHeroContentReveal } from './components/landing-hero-content-reveal'
@@ -19,6 +20,25 @@ export function LandingHero() {
   // scope the click-triggered exit animation below via `contextSafe`, so
   // its tweens get cleaned up correctly if the section unmounts mid-flight.
   const { contextSafe } = useGSAP({ scope: section })
+
+  // The section's own black-to-theme background fade (see `.LandingHero` in
+  // styles.module.css for the starting `background-color: #000`) — kept
+  // separate from the click-exit `useGSAP` above since it's a one-shot
+  // mount-time subscription, not part of that timeline.
+  useGSAP(
+    () => {
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+      return subscribeToLandingReveal(() => {
+        gsap.to(section.current, {
+          backgroundColor: 'transparent',
+          duration: prefersReducedMotion ? 0 : 1.8,
+          ease: 'power1.out',
+        })
+      })
+    },
+    { scope: section },
+  )
 
   const handleExploreClick = contextSafe((event: MouseEvent<HTMLAnchorElement>) => {
     // Reduced-motion users skip straight to the destination — nothing to
@@ -82,20 +102,21 @@ export function LandingHero() {
       })
     }
 
-    // Headline exits left, subtext exits right — a "parting" motion rather
-    // than a shared direction, so the two lines read as deliberately
-    // diverging instead of just sliding off together.
+    // Headline and subtext exit the same way they entered, just reversed:
+    // sharp -> blurry -> gone, instead of sliding off sideways. `filter`
+    // starts from the concrete `blur(0px)` set in styles.module.css (not
+    // `'none'`) so GSAP has a real value to interpolate away from.
     if (headline) {
-      tl.to(headline, { autoAlpha: 0, x: -60, duration: 0.5, ease: 'power2.in' }, 0)
+      tl.to(headline, { autoAlpha: 0, filter: 'blur(16px)', duration: 0.5, ease: 'power2.in' }, 0)
     }
     if (subtext) {
-      tl.to(subtext, { autoAlpha: 0, x: 60, duration: 0.5, ease: 'power2.in' }, 0)
+      tl.to(subtext, { autoAlpha: 0, filter: 'blur(16px)', duration: 0.5, ease: 'power2.in' }, 0.05)
     }
 
-    // CTA just fades in place, no movement, slower than the text so it's
-    // the last thing still visible before the page navigates away.
+    // CTA fades out while drifting down, slower than the text so it's the
+    // last thing still visible before the page navigates away.
     if (cta) {
-      tl.to(cta, { autoAlpha: 0, duration: 0.8, ease: 'power1.in' }, 0)
+      tl.to(cta, { autoAlpha: 0, y: 40, duration: 0.8, ease: 'power1.in' }, 0)
     }
   })
 

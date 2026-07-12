@@ -3,6 +3,12 @@
 
 .LandingHero {
   @apply relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 py-16 text-center sm:py-20;
+  /* Starts pure black regardless of theme, then fades to the real
+     `--background` (see `body` in globals.css, painted underneath this
+     section) the moment `LandingHeroContentReveal` dispatches the reveal
+     event — see the `useGSAP` in `index.tsx` that animates this to
+     `transparent`. */
+  background-color: #000;
 }
 
 .LandingHero_content {
@@ -44,6 +50,15 @@
      metrics (Figma's own renderer fits it) — without it, that line wraps
      again and turns 3 lines into 4. */
   @apply text-foreground font-serif text-[1.75rem] leading-[1.088] whitespace-nowrap sm:text-4xl md:text-[2.875rem] lg:text-[3.5625rem];
+  /* Concrete starting value (not `none`) so the entrance/exit tweens in
+     `LandingHeroContentReveal`/`index.tsx` have a real blur length to
+     interpolate to/from. */
+  filter: blur(0px);
+  /* Only `color`, not `filter` — GSAP drives the blur itself via inline
+     styles set every frame, and a CSS transition on the same property would
+     fight it. `color` is untouched by GSAP here, so it's safe to smooth a
+     light/dark toggle. */
+  transition: color 0.4s ease;
 }
 
 .LandingHero_subtext {
@@ -51,15 +66,22 @@
      breakpoint; smaller steps below it scale down monotonically (this used
      to peak at sm/md and shrink again at lg, which was backwards). */
   @apply text-foreground-muted font-serif text-sm leading-[1.647] sm:text-base lg:text-[1.0625rem];
+  /* See `.LandingHero_headline`'s matching comments (blur + color). */
+  filter: blur(0px);
+  transition: color 0.4s ease;
 }
 
 .LandingHero_cta {
   /* Figma CTA: 0px/40px padding, hug-content width, 50px height, cream fill,
      Patua One 15px/18px (0.9375rem/1.125rem) regular weight, dark navy
-     text. Focus-visible outline follows the same pattern as
-     `ArtifactThumbnail` (Story 3.1), colored to contrast against this
-     button's own cream fill rather than the page background behind it.
-     Hover/active use a CSS transform (scale), not GSAP, matching this
+     text — on the dark theme. `bg-cta`/`text-cta-foreground` (globals.css)
+     invert those two on the light theme instead of hardcoding cream/navy:
+     light theme's page background IS cream-100, so a literal cream-filled
+     button used to sit flush against a cream page with no contrast at all.
+     Focus-visible outline follows the same pattern as `ArtifactThumbnail`
+     (Story 3.1), colored to contrast against this button's own fill rather
+     than the page background behind it. Hover/active use a CSS transform
+     (scale), not GSAP, matching this
      codebase's convention of plain CSS transitions for simple hover
      micro-interactions (see `ArtifactThumbnail_grid:hover` scaling its
      image) — GSAP is reserved for the entrance/exit sequences in
@@ -69,5 +91,12 @@
      inline `transform`/`opacity` once done (see `clearProps` in
      `landing-hero-content-reveal/index.tsx`) — otherwise that inline style
      would permanently override this rule regardless of specificity. */
-  @apply bg-cream text-navy hover:bg-cream/90 hover:scale-[1.04] active:scale-[0.97] focus-visible:outline-navy font-display inline-flex h-[50px] items-center justify-center rounded-full px-10 text-[0.9375rem] leading-[1.125rem] font-normal transition focus-visible:outline-2 focus-visible:outline-offset-4;
+  @apply bg-cta text-cta-foreground hover:bg-cta/90 focus-visible:outline-cta-foreground font-display inline-flex h-[50px] items-center justify-center rounded-full px-10 text-[0.9375rem] leading-[1.125rem] font-normal transition hover:scale-[1.04] focus-visible:outline-2 focus-visible:outline-offset-4 active:scale-[0.97];
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .LandingHero_headline,
+  .LandingHero_subtext {
+    transition: none;
+  }
 }

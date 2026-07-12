@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
   /* Figma "Ion Oval Zip Legend" palette (dark theme, default) */
@@ -12,6 +12,12 @@
   --foreground: var(--cream-100);
   --foreground-muted: var(--cream-200);
 
+  /* Landing hero CTA fill/text — cream-on-navy on the dark theme, inverted
+     on the light theme below so the button never blends into a
+     same-color page background (see `.LandingHero_cta`). */
+  --cta-background: var(--cream-100);
+  --cta-foreground: var(--navy-900);
+
   /* Global text-size scale, adjusted by the footer's A+/A- controls (Story 1.7) */
   --font-scale: 1;
 }
@@ -22,6 +28,9 @@
   --background-elevated: #e3ddd0;
   --foreground: var(--navy-900);
   --foreground-muted: #4d5a70;
+
+  --cta-background: var(--navy-900);
+  --cta-foreground: var(--cream-100);
 }
 
 @theme inline {
@@ -32,6 +41,8 @@
   --color-navy: var(--navy-900);
   --color-navy-elevated: var(--navy-800);
   --color-cream: var(--cream-100);
+  --color-cta: var(--cta-background);
+  --color-cta-foreground: var(--cta-foreground);
 
   --font-display: var(--font-patua-one);
   --font-serif: var(--font-playfair-display);
@@ -45,4 +56,18 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-serif), Georgia, serif;
+  /* Smooths the light/dark toggle (`.light` added/removed on `<html>` by
+     `ThemeFontControls`) instead of the page's base background/text color
+     snapping instantly. Individual components with their own themed colors
+     (`SiteHeader`, `SiteFooter`, `LandingHero`, `ListBackground`, ...) carry
+     matching transitions of their own — see each for why. */
+  transition:
+    background-color 0.5s ease,
+    color 0.5s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body {
+    transition: none;
+  }
 }
