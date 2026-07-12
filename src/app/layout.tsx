@@ -25,9 +25,9 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>
-      <body className="flex min-h-full flex-col">
+      <body className="min-h-full">
         <SiteHeader />
-        <div className="flex flex-1 flex-col">{children}</div>
+        {children}
         <SiteFooter />
       </body>
     </html>
