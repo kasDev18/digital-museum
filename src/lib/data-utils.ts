@@ -17,16 +17,21 @@ export function getArtifactById(id: string): Artifact | undefined {
   return mockArtifacts.find(artifact => artifact.id === id)
 }
 
-/** Filters by category. Passing `"All Objects"` (the default) returns every artifact. */
-export function getArtifactsByType(type: ArtifactTypeFilter = ALL_OBJECTS_FILTER): Artifact[] {
+/**
+ * Filters an arbitrary artifact list by category (Story 4.2). Passing
+ * `"All Objects"` (the default) returns `artifacts` unchanged. Takes the
+ * array as a parameter — rather than always reading `mockArtifacts` itself
+ * — so client components (`ListPageContent`) can re-filter the exact props
+ * they were server-rendered with instead of reaching back into this
+ * module's own data source.
+ */
+export function filterArtifactsByType(
+  artifacts: Artifact[],
+  type: ArtifactTypeFilter = ALL_OBJECTS_FILTER,
+): Artifact[] {
   if (type === ALL_OBJECTS_FILTER) {
-    return mockArtifacts
+    return artifacts
   }
 
-  return mockArtifacts.filter(artifact => artifact.type === type)
-}
-
-/** The filter bar's full category list, in Figma-board order, "All Objects" first. */
-export function getArtifactCategories(): ArtifactTypeFilter[] {
-  return ARTIFACT_CATEGORIES
+  return artifacts.filter(artifact => artifact.type === type)
 }
