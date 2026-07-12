@@ -212,6 +212,8 @@ interface Artifact {
 **I want to** see a beautifully designed landing page matching the Figma specifications  
 **So that** I get a strong first impression of the digital museum experience
 
+**Correction from earlier draft:** the font pairing below is inverted from what this story originally assumed. Copying the actual CSS out of Figma's inspect panel for the hero's "intro TXT" layout shows the headline *and* subtext both set in **Playfair Display** (57px/62px and 17px/28px respectively), while the "Enter Exhibition" CTA label is set in **Patua One** (15px/18px) — the reverse of the "Patua One headline / Playfair Display subtext" assumption below. Patua One is still the display font per the Story 1.2 pairing, it's just applied to the CTA/UI label here rather than the page headline.
+
 **Acceptance Criteria:**
 - [ ] Header shows the Artifacta logo + wordmark (per Story 1.7 shared chrome)
 - [ ] Headline reads "Objects, Voices and Global Journeys" with subtext "Exploring identity through objects in a world shaped by migration."
@@ -219,7 +221,7 @@ interface Artifact {
 - [ ] Background disc graphic is positioned centered behind the headline, composed of concentric rings built from artifact pattern/texture crops (per `DISC.png`) — not a single flat orb image
 - [ ] Footer matches Figma design and content (per Story 1.7)
 - [ ] All text content is responsive and readable across breakpoints
-- [ ] Colors, fonts (Patua One headline / Playfair Display subtext), and spacing match Figma within reasonable pixel tolerance
+- [ ] Colors, fonts (Playfair Display headline/subtext, Patua One CTA label — see correction note above), and spacing match Figma within reasonable pixel tolerance
 - [ ] Layout is fully responsive (desktop, tablet, mobile)
 
 **Technical Notes:**
