@@ -1,0 +1,10 @@
+@reference "tailwindcss";
+@reference '../../../globals.css';
+
+.ListEmptyState {
+  @apply flex min-h-[40vh] w-full items-center justify-center px-6 text-center;
+}
+
+.ListEmptyState_message {
+  @apply text-foreground-muted font-serif text-base sm:text-lg;
+}

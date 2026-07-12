@@ -5,10 +5,21 @@
   @apply focus-visible:outline-foreground rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4;
 }
 
-/* Grid variant (Story 3.2): column card — square image, caption below. The
-   whole card is a single `<Link>` (no second target needed per its AC). */
+/* Grid variant (Story 3.2): column card — image, caption below. The whole
+   card is a single `<Link>` (no second target needed per its AC). Sizing
+   matches the Figma "Gallery" frame's dev-mode export exactly at the `lg`
+   breakpoint (400px card, 16px image/title gap); `sm`/base widths scale
+   proportionally since the frame only specifies a desktop reference. This
+   width lives here (not in the consuming `ArtifactGrid`/`ArtifactList`
+   layouts) for the same reason the list variant's own fixed thumbnail size
+   below does — it's an intrinsic property of the variant, not something a
+   container should have to know. */
 .ArtifactThumbnail_grid {
-  @apply flex w-full flex-col gap-3;
+  /* `shrink-0`: without it, a flex row bounded to a fixed width (e.g.
+     Story 3.2's per-row `overflow-x-auto` scroll strip) would compress
+     these cards below their explicit width to fit, instead of overflowing
+     the row so it actually needs to scroll. */
+  @apply flex w-[45vw] shrink-0 flex-col gap-4 sm:w-[30vw] lg:w-[400px];
 }
 
 .ArtifactThumbnail_grid:hover .ArtifactThumbnail_imageWrap,
@@ -28,8 +39,11 @@
   @apply bg-background-elevated relative isolate block aspect-square shrink-0 overflow-hidden rounded-lg shadow-none transition-shadow;
 }
 
+/* 400:280 per the Figma frame (a 10:7 rectangle, not square) with a 16px
+   radius — overrides the shared square/8px-radius rule above via the
+   descendant selector's higher specificity. */
 .ArtifactThumbnail_grid .ArtifactThumbnail_imageWrap {
-  @apply w-full;
+  @apply aspect-[10/7] w-full rounded-2xl;
 }
 
 .ArtifactThumbnail_list .ArtifactThumbnail_imageWrap {
@@ -72,6 +86,31 @@
 
 .ArtifactThumbnail_title {
   @apply text-foreground font-serif text-sm sm:text-base;
+}
+
+/* 22px/18px (font-size/line-height) per the Figma frame at the `lg`
+   breakpoint — an intentionally tight leading for this single-line
+   caption, scaled down proportionally below `lg` since the frame only
+   specifies a desktop reference. Overrides the shared rule above (and its
+   bundled Tailwind `text-*` line-heights) via higher selector specificity. */
+.ArtifactThumbnail_grid .ArtifactThumbnail_title {
+  @apply font-normal;
+  font-size: 0.875rem;
+  line-height: 0.7188rem;
+}
+
+@media (min-width: 640px) {
+  .ArtifactThumbnail_grid .ArtifactThumbnail_title {
+    font-size: 1.125rem;
+    line-height: 0.9375rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .ArtifactThumbnail_grid .ArtifactThumbnail_title {
+    font-size: 1.375rem; /* 22px — exact Figma spec */
+    line-height: 1.125rem; /* 18px — exact Figma spec */
+  }
 }
 
 .ArtifactThumbnail_list .ArtifactThumbnail_title {

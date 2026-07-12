@@ -69,7 +69,7 @@ export function ArtifactThumbnail({
         priority={priority}
         sizes={
           variant === 'grid'
-            ? '(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 220px'
+            ? '(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 400px'
             : '(max-width: 640px) 64px, 80px'
         }
         className={cn(

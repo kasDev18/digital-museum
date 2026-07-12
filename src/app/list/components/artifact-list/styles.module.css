@@ -1,0 +1,6 @@
+@reference "tailwindcss";
+@reference '../../../globals.css';
+
+.ArtifactList {
+  @apply mx-auto flex w-full max-w-3xl list-none flex-col px-6 sm:px-10;
+}

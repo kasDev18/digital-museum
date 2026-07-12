@@ -1,0 +1,42 @@
+@reference "tailwindcss";
+@reference '../../../../../globals.css';
+
+/* Clips the track's overflow — there's no native scroll here at all
+   (panning is entirely driven by the track's own `transform`, written
+   directly by `useDragPan`), so there's never a scrollbar to hide.
+   `touch-pan-y` lets vertical touch scroll (moving down the page) pass
+   through natively while horizontal drags are handled by the pointer
+   handlers instead of the browser's own touch-scroll gesture. */
+.ArtifactGridRow {
+  @apply w-full cursor-grab touch-pan-y overflow-hidden select-none;
+}
+
+.ArtifactGridRow_dragging {
+  @apply cursor-grabbing;
+}
+
+/* First row gets extra top clearance; the Figma frame reserves 330px here
+   (site header + the not-yet-built category filter bar, Story 4.2, both
+   visible in the frame's screenshot) — this uses a smaller placeholder
+   value stacked on top of `ListPage`'s own header-clearance padding, since
+   that filter-bar chrome doesn't exist yet. Last row gets extra bottom
+   clearance before the fixed footer, matching the frame's 150px. */
+.ArtifactGridRow_first {
+  @apply pt-14 lg:pt-36;
+}
+
+.ArtifactGridRow_last {
+  @apply pb-8 lg:pb-[9.375rem];
+}
+
+/* Centered by default — safe here specifically because panning is
+   JS-driven (see useDragPan), not `scrollLeft`-driven, so there's no
+   "can't scroll into negative territory" limitation. `will-change`
+   is set permanently (not toggled per drag) since this element is
+   plausibly mid-transform for as long as the row is mounted, unlike a
+   one-off entrance animation — matches the same reasoning
+   `LandingHeroDisc` uses for its own continuously-animated element. */
+.ArtifactGridRow_track {
+  @apply flex flex-row items-center justify-center gap-6 px-4 sm:gap-16 sm:px-6 lg:gap-[7.5rem] lg:px-10;
+  will-change: transform;
+}
