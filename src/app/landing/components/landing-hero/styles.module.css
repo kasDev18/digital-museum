@@ -1,0 +1,70 @@
+@reference "tailwindcss";
+@reference '../../../globals.css';
+
+.LandingHero {
+  @apply relative flex flex-1 flex-col items-center justify-center overflow-hidden px-6 py-16 text-center sm:py-20;
+}
+
+.LandingHero_disc {
+  /* Sized so the disc's empty center (≈44.4% of this width — fixed by the
+     source artwork's ring geometry, see landing-hero/index.tsx) stays
+     comfortably wider than the 384px title block at every breakpoint's
+     headline size, instead of the rings crowding right up against the text. */
+  @apply pointer-events-none absolute top-1/2 left-1/2 aspect-[1379/1393] w-[760px] -translate-x-1/2 -translate-y-1/2 sm:w-[880px] md:w-[980px] lg:w-[1100px] xl:w-[1220px];
+}
+
+.LandingHero_discGroup {
+  @apply absolute;
+}
+
+.LandingHero_discRing {
+  @apply object-contain;
+}
+
+.LandingHero_content {
+  /* Figma "intro TXT layout": column, centered, 30px gap between the title
+     block and the CTA. */
+  @apply relative z-10 flex max-w-xl flex-col items-center gap-[30px];
+}
+
+/* Soft scrim behind the text stack so it stays legible over the disc's
+   busy pattern rings at every breakpoint, without hiding the artwork
+   elsewhere on the disc. Sized off the content box itself (not a fixed
+   breakpoint value) so it always matches however tall the 3-line headline
+   + subtext + CTA stack renders. */
+.LandingHero_content::before {
+  content: '';
+  @apply absolute -inset-x-8 -inset-y-6 -z-10 rounded-[100%];
+  background: radial-gradient(closest-side, var(--background) 55%, transparent 100%);
+}
+
+.LandingHero_titleBlock {
+  /* Figma "title layout": column, 25px gap between headline and subtext,
+     384px reference width (matches the exact desktop wrap: "Objects, Voices"
+     / "and Global" / "Journeys" and the 2-line subtext). */
+  @apply flex w-full max-w-[384px] flex-col items-center gap-[25px];
+}
+
+.LandingHero_headline {
+  /* font-family/line-height ratio (62/57) per Figma; font-size steps up
+     monotonically to the exact 57px spec value at the lg breakpoint (the
+     desktop primary-fidelity target). Each manually-broken line gets
+     `whitespace-nowrap` because "Objects, Voices" measures a few px wider
+     than the 384px title block in Chromium's Playfair Display metrics
+     (Figma's own renderer fits it) — without it, that line wraps again and
+     turns 3 lines into 4. */
+  @apply text-foreground font-serif text-[1.75rem] leading-[1.088] whitespace-nowrap sm:text-4xl md:text-[2.875rem] lg:text-[57px];
+}
+
+.LandingHero_subtext {
+  /* font-size/line-height (17px/28px) per Figma at the lg breakpoint;
+     smaller steps below it scale down monotonically (this used to peak at
+     sm/md and shrink again at lg, which was backwards). */
+  @apply text-foreground-muted font-serif text-sm leading-[1.647] sm:text-base lg:text-[17px];
+}
+
+.LandingHero_cta {
+  /* Figma CTA: 0px/40px padding, hug-content width, 50px height, cream fill,
+     Patua One 15px/18px regular weight, dark navy text. */
+  @apply bg-cream text-navy hover:bg-cream/90 font-display inline-flex h-[50px] items-center justify-center rounded-full px-10 text-[15px] leading-[18px] font-normal transition-colors;
+}
