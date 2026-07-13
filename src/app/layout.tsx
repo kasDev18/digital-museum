@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { SiteHeader } from '@/components/layout/site-header'
 import { SiteFooter } from '@/components/layout/site-footer'
 import { THEME_INIT_SCRIPT } from '@/lib/theme-script'
-import { patuaOne, playfairDisplay } from './fonts'
+import { notoSans, patuaOne, playfairDisplay } from './fonts'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -19,7 +19,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${patuaOne.variable} ${playfairDisplay.variable} h-full antialiased`}
+      className={`${patuaOne.variable} ${playfairDisplay.variable} ${notoSans.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <head>

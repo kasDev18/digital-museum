@@ -46,6 +46,7 @@
 
   --font-display: var(--font-patua-one);
   --font-serif: var(--font-playfair-display);
+  --font-sans: var(--font-noto-sans);
 }
 
 html {

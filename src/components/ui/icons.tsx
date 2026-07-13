@@ -168,6 +168,61 @@ export function ListViewIcon(props: SVGProps<SVGSVGElement>) {
   )
 }
 
+/** Detail page audio player (Story 5.1's minimal layout slot for Story 5.3's full player) — solid triangle, matching the mock's filled play-button treatment rather than this file's usual outlined-stroke style. */
+export function PlayIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      viewBox="0 0 40 40"
+      fill="none"
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path
+        fill="currentColor"
+        d="M15 12.2v15.6a1 1 0 0 0 1.53.848l12.6-7.8a1 1 0 0 0 0-1.696l-12.6-7.8A1 1 0 0 0 15 12.2Z"
+      />
+    </svg>
+  )
+}
+
+/** Pairs with `PlayIcon` as the audio player's toggled state — see that icon's own doc comment. */
+export function PauseIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      viewBox="0 0 40 40"
+      fill="none"
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <rect x="12.5" y="11.5" width="5.5" height="17" rx="1.5" fill="currentColor" />
+      <rect x="22" y="11.5" width="5.5" height="17" rx="1.5" fill="currentColor" />
+    </svg>
+  )
+}
+
+/** MediaCarousel's "More Images" affordance (Story 5.2) — per the detail mock's downward-chevron treatment on that button, distinct from `ExploreStoryArrowIcon`'s circled diagonal arrow used for the Detail page's own "Next story" control. */
+export function ChevronDownIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      viewBox="0 0 40 40"
+      fill="none"
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+        d="m12 16.5 8 8 8-8"
+      />
+    </svg>
+  )
+}
+
 export function BackArrowIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg

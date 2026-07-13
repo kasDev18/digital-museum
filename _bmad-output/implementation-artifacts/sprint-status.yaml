@@ -1,5 +1,5 @@
 # generated: 2026-07-11
-# last_updated: 2026-07-13 (Stories 4.3, 4.4 & 4.5 implemented, plus a Story 4.1 addendum — filtered empty state, cross-navigation state persistence, touch/mobile optimization, genuinely infinite grid drag, and the drag-cursor badge affordance)
+# last_updated: 2026-07-13 (Stories 5.1 & 5.2 implemented — Detail page layout + top toolbar, and the media carousel — on top of Stories 4.3, 4.4 & 4.5, plus a Story 4.1 addendum)
 # project: digital-museum
 # project_key: NOKEY
 # tracking_system: file-system
@@ -9,7 +9,7 @@
 # readiness: IN PROGRESS - Epic 1 partially complete
 # architectural_decision: Next.js (App Router) + Tailwind CSS + GSAP for animations, no backend/CMS required, mock data-driven content
 # NOTE: This is a technical assessment project with a 4-day deadline (July 15, 2026). Required scope = Epics 1-4 + 6 (Landing Page + List Page + QA). Epic 5 (Details Page) is stretch scope only if time permits.
-# CURRENT STATUS: Epic 1 complete (all 7 stories done). Epic 2 complete - all 5 stories (2.1-2.5) done. Epic 3 complete - all 5 stories (3.1-3.5) done. Epic 4 complete - all 5 stories (4.1-4.5) done. Epic 6 (QA & Delivery) next.
+# CURRENT STATUS: Epic 1 complete (all 7 stories done). Epic 2 complete - all 5 stories (2.1-2.5) done. Epic 3 complete - all 5 stories (3.1-3.5) done. Epic 4 complete - all 5 stories (4.1-4.5) done. Epic 5 (stretch) in progress - Stories 5.1 & 5.2 done (Detail page layout + media carousel). Epic 6 (QA & Delivery) still pending - required scope, not yet started.
 
 # STATUS DEFINITIONS:
 # ==================
@@ -107,9 +107,9 @@ development_status:
   # Media "More Images" stepper, audio player/zoom/download/comment/migration-journey controls
   # ONLY ATTEMPT IF TIME PERMITS after Epics 1-4 + 6 are complete
   # ─────────────────────────────────────────────────────────────────────────
-  epic-5: ready-for-dev
-  5-1-build-detail-page-layout: ready-for-dev
-  5-2-implement-media-carousel: ready-for-dev
+  epic-5: in-progress
+  5-1-build-detail-page-layout: done
+  5-2-implement-media-carousel: done
   5-3-add-audio-controls: ready-for-dev
   5-4-add-zoom-controls: ready-for-dev
   5-5-add-download-pdf-action: ready-for-dev
@@ -206,7 +206,20 @@ development_status:
 #     underlying pointer-events drag/pan and `touch-pan-y` gesture isolation
 #     were already in place from Story 4.1)
 #
-# Overall Project Progress: 22/38 stories complete (58%)
-# Remaining Work: 16 stories (42%)
-# Estimated Completion: Epics 1-4 complete (required scope); continue with
-#   Epic 6 (QA & Delivery) — Epic 5 (Details Page) remains stretch-only scope
+# Epic 5 Progress: 2/8 stories complete (25%) — IN PROGRESS (stretch scope)
+# Completed Stories:
+#   - Story 5.1: Build Detail Page Layout ✅ (`DetailPageContent` supersedes
+#     Story 3.5's `DetailPlaceholder` stopgap; `DetailToolbar`'s "All
+#     Objects"/"Next story" top bar, two-column desktop layout stacking to
+#     media-above-text on mobile, and a minimal-but-working `AudioPlayer`
+#     slot standing in for Story 5.3's own fuller scope)
+#   - Story 5.2: Implement Media Carousel ✅ (`MediaCarousel` — "More
+#     Images" button, clickable dot indicators, arrow-key and swipe
+#     navigation, all wrapping at both ends; hides its own controls
+#     entirely for single-item media)
+#
+# Overall Project Progress: 24/38 stories complete (63%)
+# Remaining Work: 14 stories (37%)
+# Estimated Completion: Epics 1-4 complete (required scope); Epic 5
+#   (Details Page, stretch) in progress with Stories 5.1/5.2 done — Epic 6
+#   (QA & Delivery) is the remaining required scope, not yet started
