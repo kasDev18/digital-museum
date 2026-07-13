@@ -1,0 +1,143 @@
+@reference "tailwindcss";
+@reference '../../../../app/globals.css';
+
+.ArtifactStory {
+  @apply flex flex-col gap-6;
+}
+
+/* Everything but the title now lives one level deeper, inside its own
+   enter/exit animation (see index.tsx's `isExiting` prop and the
+   `ArtifactStory_content*` keyframes below) — this reproduces the same
+   `gap-6` between its own children (divider/contributor/quote/audio/
+   description) that `.ArtifactStory` used to provide directly, so the
+   wrapper is spacing-neutral. */
+.ArtifactStory_content {
+  @apply flex flex-col gap-6;
+}
+
+/* Slides up from below on mount, reversed (slides out toward the top)
+   via `_exiting` — same technique as `.ArtifactStory_title` above, just
+   translateY instead of blur. */
+@media (prefers-reduced-motion: no-preference) {
+  .ArtifactStory_content {
+    animation: ArtifactStory_contentEnter 0.75s ease-out both;
+  }
+
+  .ArtifactStory_content_exiting {
+    animation: ArtifactStory_contentExit 0.6s ease-in both;
+  }
+}
+
+@keyframes ArtifactStory_contentEnter {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ArtifactStory_contentExit {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-28px);
+  }
+}
+
+/* `xl:`/`2xl:` steps beyond the old `lg:text-5xl` ceiling — `DetailPage`
+   has no `max-w` cap, so this text column grows on a very wide viewport,
+   and the smaller type scale started looking sparse relative to that
+   extra width. `lg:text-5xl` (48px) is the PSD's own exact title size;
+   `leading-[1.333]` matches its 64px line-height as a ratio (64/48)
+   rather than a fixed px, so every step of the ladder keeps the same
+   proportion instead of just the one size Figma measured. */
+.ArtifactStory_title {
+  @apply text-foreground font-serif text-3xl leading-[1.333] sm:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl;
+}
+
+/* Blurry-hidden → sharp-visible on mount, reversed via `_exiting` (set
+   from the `isExiting` prop) just ahead of navigating away — same
+   mount-animation + boolean-prop-swap technique as `MediaCarousel`'s
+   flip, see that component's doc comment for why this isn't
+   `<ViewTransition>`. */
+@media (prefers-reduced-motion: no-preference) {
+  .ArtifactStory_title {
+    animation: ArtifactStory_titleReveal 0.8s ease-out both;
+  }
+
+  .ArtifactStory_title_exiting {
+    animation: ArtifactStory_titleHide 0.5s ease-in both;
+  }
+}
+
+@keyframes ArtifactStory_titleReveal {
+  from {
+    opacity: 0;
+    filter: blur(14px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+@keyframes ArtifactStory_titleHide {
+  from {
+    opacity: 1;
+    filter: blur(0);
+  }
+  to {
+    opacity: 0;
+    filter: blur(14px);
+  }
+}
+
+.ArtifactStory_divider {
+  @apply border-foreground-muted/20 border-t;
+}
+
+.ArtifactStory_contributor {
+  @apply flex flex-col gap-1;
+}
+
+/* PSD's own export merges "Contributed by" + the name into one Noto
+   Sans, 13px/12px text node — that 12/13 ≈ 0.923 ratio is applied here
+   as the line-height (holds across the `text-xs`/`sm:text-sm` ladder
+   below); `.ArtifactStory_contributorName` keeps its own distinct
+   larger/serif treatment since the actual screenshot clearly renders it
+   that way despite the merged CSS export (a Figma-plugin quirk when a
+   single text layer mixes two inline styles, not a real single style). */
+.ArtifactStory_contributorLabel {
+  @apply text-foreground-muted font-sans text-xs leading-[0.923] tracking-[0.2em] uppercase sm:text-sm;
+}
+
+.ArtifactStory_contributorName {
+  @apply text-foreground font-serif text-lg sm:text-xl xl:text-2xl;
+}
+
+/* PSD: Noto Sans italic, 24px/32px — Tailwind's `text-2xl` is already
+   exactly 1.5rem/2rem (24/32), no arbitrary value needed. The PSD's own
+   "Separators" swatch (`#c7c6c5`) is only ~8 units off `--foreground-
+   muted`'s dark-theme value (`--cream-200`, `#cfc9be`) — close enough
+   that the theme token is used here instead of that fixed hex: the PSD
+   only defines this color for the dark theme, and a fixed light gray
+   would go nearly illegible against the light theme's cream background
+   (confirmed visually — this was tried and reverted). */
+.ArtifactStory_quote p {
+  @apply text-foreground-muted font-sans text-xl italic sm:text-2xl;
+}
+
+/* PSD: Playfair Display, weight 500, 15px/21px (140% — `leading-[1.4]`
+   holds that ratio across the `sm:`/`xl:` steps below), color Cream
+   (`--foreground`, full-strength) — this previously used
+   `--foreground-muted`, which the PSD's description/story-intro text
+   doesn't: it's the same brightness as the title, not dimmed. */
+.ArtifactStory_description {
+  @apply text-foreground font-serif text-[15px] leading-[1.4] font-medium sm:text-lg xl:text-xl;
+}

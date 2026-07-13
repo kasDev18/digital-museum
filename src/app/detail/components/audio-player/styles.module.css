@@ -1,0 +1,36 @@
+@reference "tailwindcss";
+@reference '../../../../app/globals.css';
+
+.AudioPlayer {
+  @apply flex items-center gap-3;
+}
+
+.AudioPlayer[data-disabled='true'] {
+  @apply opacity-60;
+}
+
+.AudioPlayer_toggle {
+  @apply bg-foreground text-background flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-transform hover:scale-[1.05] active:scale-[0.95] disabled:cursor-not-allowed disabled:hover:scale-100 disabled:active:scale-100;
+}
+
+.AudioPlayer_icon {
+  @apply h-4 w-4;
+}
+
+/* Minimal seek bar — the mock's exact tick-mark waveform visualization is
+   Story 5.3's own scope (see AudioPlayer's doc comment); `accent-color`
+   (native, theme-following via `currentColor`) covers the filled-progress
+   look with no custom thumb/track pseudo-elements needed for this pass. */
+.AudioPlayer_track {
+  @apply accent-foreground h-1 flex-1 cursor-pointer disabled:cursor-not-allowed;
+}
+
+/* PSD: "Noto Sans Display" bold, 13px/18px, dark blue — the dark-blue
+   color only reads against the PSD's own white player pill, which is
+   Story 5.3's fuller-fidelity scope (this player is still the
+   deliberately minimal stand-in its own doc comment describes), so only
+   the font-family/weight transfer here; color stays `--foreground-muted`
+   for legibility against this player's current (non-white) background. */
+.AudioPlayer_time {
+  @apply text-foreground-muted shrink-0 font-sans text-xs font-bold tabular-nums sm:text-sm;
+}

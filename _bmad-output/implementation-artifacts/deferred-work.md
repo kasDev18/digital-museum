@@ -2,6 +2,201 @@
 
 Findings from code review that are real but not actionable in the story that surfaced them — pre-existing patterns, out-of-scope items, or theoretical edge cases disproportionate to fix now.
 
+## Resolved: `media` images backfilled for all 12 artifacts (2026-07-14)
+
+The user supplied two batches of real photos, both exported from a design/
+gallery tool with generic or mismatched filenames — e.g. several in the
+first batch were named `Beaded_Hooded_Gown_*.png` despite actually
+depicting the Vyshyvanka, Lei Po'o, Mbira, Wooden Chest, Tatreez Thobe,
+Carnival Mask, Minbar, and Mshatta Façade; the second batch's
+`image (N).jpg`/`pattern N.jpg` names carried no identifying information
+at all. Each file was identified by its actual visual content (not its
+filename), converted to an optimized progressive JPEG matching the
+existing `thumbnail.jpg` convention (~14-55KB, center-cropped to the same
+400×280/10:7 frame used throughout), and saved as
+`public/images/artifacts/<id>/1.jpg` (batch 1, all 12 artifacts) and
+`.../2.jpg` (batch 2, 7 artifacts: Minbar, Backgammon Board, Tatreez
+Thobe, Lei Po'o, Beaded Gown, Mshatta Façade, Carnival Mask). Both raw
+source folders (`images/`, `images2/`, repo root, untracked) were deleted
+once their content was extracted, per explicit instruction.
+
+**Still unbacked:** Wooden Chest/Carnival Mask/Mshatta Façade/Tatreez
+Thobe's `3.jpg` (4 artifacts declare a 3rd media entry), Vyshyvanka/
+Mbira/Jamdani's `2.jpg` (not covered by either supplied batch), and every
+`audioUrl` — the bullet below still applies to those. One image from the
+second batch (a ceramic/glazed surface with a carved fern-leaf motif) was
+**not** assigned to any artifact — it didn't visually match any of the 12
+mock artifacts' actual subjects, and forcing a guess seemed worse than
+leaving it out; flag if it belongs somewhere.
+
+## Deferred from: post-review visual polish pass on story-5-1/story-5-2 (2026-07-13)
+
+- **`SiteHeader` (Story 1.7, shared across every page) is missing a small
+  circular icon shown in the top-left of the header row in every captured
+  mock (Landing, List, and Detail) next to the centered "Artifacta"
+  wordmark** — visually a speaker/sound icon. Not called out in Story
+  1.7's own AC (logo mark + wordmark only) or in any other story's AC
+  either, so its intended behavior (a global mute/unmute toggle per
+  Story 5.3's own `sound.png` two-state asset, a read-aloud/text-to-speech
+  entry point, or a purely decorative brand-mark element) is genuinely
+  unclear from the specs alone — flagged to the user directly rather than
+  guessed at, since it would mean adding new interactive behavior to a
+  shared, already-"done" component used by every page, well outside this
+  pass's own Stories 5.1/5.2 scope. Explicitly deferred at the user's
+  request pending a decision on what it should actually do.
+
+## Deferred from: story-5-1/story-5-2 — Detail page layout + media carousel (2026-07-13)
+
+- **`AudioPlayer` is a deliberately minimal stand-in for Story 5.3's own
+  full scope, not that story pulled forward.** Story 5.1's own AC requires
+  an audio player to appear in the content stack, so this pass built one:
+  native HTML5 `<audio>`, play/pause toggle, a real seekable `<input
+type="range">` progress bar, and `m:ss / m:ss` labels. What it does
+  _not_ attempt — and what Story 5.3 still owns — is the mock's exact
+  tick-mark waveform scrubber visualization (a decorative, evenly-spaced-
+  ticks CSS treatment per that story's own Technical Notes, not real
+  waveform analysis) and the mute/unmute speaker toggle. Both are real,
+  scoped, and deferred rather than accidentally missed.
+- **The `media` (and `audioUrl`) assets referenced by
+  `src/data/mock-data.ts` remain partially unbacked by real files** — a
+  pre-existing, already-documented gap (see `README.md`'s Artifact
+  Thumbnail Component section); this pass is the first to actually load/
+  play against them, so it's the first to visibly exercise it. `media[0]`
+  (`1.jpg`) is now backed for all 12 artifacts (see the entry above), but
+  `2.jpg`/`3.jpg` (9 of the 12 artifacts declare more than one media
+  entry) still 404 (a `next/image` optimizer 400, specifically), and
+  pressing play on any artifact with a non-null `audioUrl` throws a
+  `NotSupportedError` in the console once the browser discovers the
+  source doesn't resolve.
+  `MediaCarousel` hides a failed slide behind its own
+  `bg-background-elevated` backdrop instead of a broken-image icon (an
+  `onError`-driven per-slide hide, matching `ArtifactThumbnail`'s existing
+  convention). `AudioPlayer` derives `isPlaying` from the `<audio>`
+  element's own `play`/`pause` events (see the code-review pass below) —
+  a rejected `play()` correctly leaves the toggle showing "Play" — but
+  still has no explicit visual "audio failed to load" state (an error
+  icon/message); it just silently stays in the same state a visitor
+  hadn't pressed play at all. Actually backfilling these assets (or
+  building a real waveform/error state around their absence) is outside a
+  two-story-sized pass.
+- **`MediaCarousel` has no dedicated left/right arrow-button overlay on
+  the image itself**, relying instead on the "More Images" button, dot
+  indicators, arrow keys, and touch swipe to cover the "click/arrow
+  navigation" AC (see that story's own Implementation Summary for the
+  full reasoning) — a deliberate mock-fidelity call, not an oversight, but
+  worth revisiting if a future design pass adds visible arrows to the
+  Figma mock.
+- **`getNextArtifact`'s "next" is always the full mock dataset's own
+  order, ignoring whatever category filter the visitor arrived from on
+  the List page.** Matches this story's own Technical Notes exactly
+  ("next artifact ID in the mock data array, wrapping around at the
+  end"), but means "Next story" from inside a filtered browsing session
+  (e.g. "Wearable" only) can jump to an artifact of a completely different
+  category — a real UX wrinkle if Epic 5 continues, not addressed here
+  since the spec is explicit that it's the _dataset's_ order, not the
+  filtered view's.
+
+### Code review pass (8-angle, 2026-07-13) — fixed vs. deferred
+
+An adversarial multi-angle review (line-by-line, removed-behavior,
+cross-file, reuse, simplification, efficiency, altitude, conventions) ran
+against this diff before it shipped. Two candidate findings turned out to
+be **refuted by an empirical Playwright test** rather than accepted at
+face value: this Next.js 16.2.10 install has `cacheComponents` off, so a
+client-side "Next story" navigation between two `/detail/[id]` pages
+fully remounts the page subtree — verified by advancing the carousel to
+slide 2 and starting playback on Mshatta Façade, then navigating to Lei
+Po'o, and confirming both the carousel's active dot and the audio
+play/pause state reset cleanly rather than carrying over stale values.
+That ruled out three plausible-sounding "state leaks across navigation"
+candidates the reviewing agents raised for `MediaCarousel`/`AudioPlayer`.
+
+**Fixed as part of this same pass:**
+
+- `AudioPlayer.handleToggle` set `isPlaying = true` optimistically right
+  after calling `audio.play()`, without waiting on the returned promise —
+  since every mock artifact's `audioUrl` currently 404s (see above), the
+  toggle button got stuck showing "Pause" forever with no audio actually
+  playing, confirmed via Playwright (`NotSupportedError` in the console,
+  button never reverted). Fixed by deriving `isPlaying` purely from the
+  `<audio>` element's own `play`/`pause` events instead of setting it in
+  the click handler — a rejected `play()` now correctly leaves the button
+  showing "Play."
+- `AudioPlayer` also had two hand-duplicated JSX branches (the
+  `audioUrl: null` disabled state vs. the normal playing state) — flagged
+  independently by two review angles (simplification, altitude) as a
+  drift risk for Story 5.3 (which has to add the waveform/mute controls
+  to both branches, or silently miss one). Merged into one render with a
+  `disabled` boolean threaded through, and the `<audio>` element itself
+  conditionally rendered only when `audioUrl` is set.
+- `MediaCarousel`'s touch handlers were attached to the outer container,
+  which also contains the "More Images" and dot buttons — since touch
+  events bubble, a tap-with-drag on either button could fire both the
+  button's own `onClick` _and_ the swipe handler, advancing two slides for
+  one tap. Fixed with a `closest('button')` guard in
+  `handleTouchStart`/`handleTouchEnd`.
+- `MediaCarousel`'s `goTo`/`goToNext`/`goToPrev` were wrapped in
+  `useCallback` with no memoized consumer to benefit from it, and
+  `goToNext`/`goToPrev` read `index` from a closure (a `[goTo, index]`
+  dependency array that changed identity on every index change anyway).
+  Simplified to plain functions using the functional `setIndex(current =>
+...)` form, which also removes any theoretical stale-closure risk.
+- The deleted `DetailPlaceholder`'s blockquote had a `<cite>` directly
+  attributing the quote to its speaker; the rebuilt blockquote in
+  `DetailPageContent` dropped it, relying only on the separate
+  "Contributed by" line two elements above. Restored as an `sr-only`
+  `<cite>` inside the blockquote (self-contained attribution for a
+  screen-reader user navigating by element type) without duplicating the
+  name visually, since the mock itself doesn't repeat the name under the
+  quote.
+
+**Considered and intentionally left alone (see the entries above for
+most of these — this list is only the ones a reviewing agent flagged as
+a _possible regression_ that turned out to be a deliberate call):**
+
+- Dropping `artifact.type`'s category badge from the rebuilt layout (the
+  deleted `DetailPlaceholder` showed it) — the fuller, Figma-cross-checked
+  AC list in `EPICS_AND_STORIES.md` (not this story's own terser summary
+  file) enumerates the exact content stack with no category label in it,
+  matching the captured Mshatta Façade detail mock itself. Documented
+  directly in `DetailPageContent`'s own doc comment.
+- The `next/image` `priority` prop is deprecated in Next.js 16 in favor of
+  a new `preload` prop (confirmed against
+  `node_modules/next/dist/docs/01-app/03-api-reference/02-components/image.md`).
+  `MediaCarousel` uses `priority`, but so do 5 pre-existing components
+  (`SiteHeader`, `LandingHeroDisc`, `ArtifactGridRow`, `ArtifactThumbnail`
+  — which threads a whole `priority` prop through its own public API —
+  and `ArtifactList`). Migrating only the one new usage would leave the
+  other five inconsistent; this is a repo-wide migration, not a
+  two-story-sized one.
+- `getArtifactById` is called once each in `generateMetadata` and the
+  page component body (`src/app/detail/[id]/page.tsx`), and
+  `getNextArtifact` does its own separate `findIndex` scan — three linear
+  scans of the same 12-item array per request. Real, but trivial at this
+  dataset size; worth a `cache()`-wrapped lookup or a combined
+  `{artifact, nextArtifact}` helper only if the data source ever moves off
+  an in-memory array.
+- All of a multi-image artifact's `<Image>` slides mount immediately
+  (only `priority={i === 0}` differs; the rest default to
+  `loading="lazy"`) rather than only mounting the active/adjacent slide —
+  negligible today since every mock artifact has 1-3 media images, worth
+  revisiting only if artifacts gain substantially larger media sets.
+- `MediaCarousel`'s per-slide `onError` hide-on-failure and
+  `ArtifactThumbnail`'s own loading-skeleton-plus-hide-on-error are two
+  independent implementations of the same idea, with no shared hook
+  between them (and `MediaCarousel` has no loading-skeleton half at all,
+  just the hide-on-error half) — a `useImageLoadState` extraction is
+  reasonable once a third component needs the same pattern, not
+  preemptively for two.
+- Several small CSS duplications (the `focus-visible` outline treatment
+  repeated across `DetailToolbar`/`MediaCarousel`; `AudioPlayer`'s and
+  `MediaCarousel`'s own slightly-different hover/active tactile-scale
+  numbers, joining `ViewSwitcher`'s and `LandingHero_cta`'s existing,
+  already-deferred versions of the same pattern) — matches this file's
+  own already-established "three-plus near-identical occurrences is the
+  conventional extract threshold" precedent (see the story-4-1 entry
+  below); not yet at that threshold to justify a shared class today.
+
 ## Deferred from: story-4-1 addendum — infinite drag + drag badge (2026-07-13)
 
 - **`ArtifactGridRow`'s `TILE_COUNT = 7` is a fixed constant, not dynamically computed from the actual viewport width.** Verified generous enough for any single real display up to 5120px (5K) — including the narrowest (3-item, so fastest-exhausted) row — with real margin to spare, but an exotic multi-monitor span well beyond that (e.g. three 4K displays combined, ~11500px) could theoretically exceed what 7 tiles cover on that specific row. A fully robust fix would measure the viewport (and re-measure on resize) to compute the exact tile count needed; deferred since it adds real complexity for a display configuration far outside this project's realistic audience, and the fixed constant is trivially bumped later if it ever proves insufficient.

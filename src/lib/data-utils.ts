@@ -18,6 +18,22 @@ export function getArtifactById(id: string): Artifact | undefined {
 }
 
 /**
+ * The Detail page's "Next story" control (Story 5.1) — always the next
+ * artifact in the full mock dataset's own order, wrapping back to the
+ * first after the last, regardless of any List page category filter the
+ * visitor arrived from. Returns `undefined` only if `currentId` itself
+ * isn't a real artifact id, which never happens from the Detail page's own
+ * route (it already 404s on an unknown id before rendering anything that
+ * could call this).
+ */
+export function getNextArtifact(currentId: string): Artifact | undefined {
+  const currentIndex = mockArtifacts.findIndex(artifact => artifact.id === currentId)
+  if (currentIndex === -1) return undefined
+
+  return mockArtifacts[(currentIndex + 1) % mockArtifacts.length]
+}
+
+/**
  * Filters an arbitrary artifact list by category (Story 4.2). Passing
  * `"All Objects"` (the default) returns `artifacts` unchanged. Takes the
  * array as a parameter — rather than always reading `mockArtifacts` itself
