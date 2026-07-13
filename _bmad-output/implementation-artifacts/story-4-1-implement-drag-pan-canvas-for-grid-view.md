@@ -13,8 +13,8 @@
 ## Acceptance Criteria
 - [x] Grid view supports mouse drag to pan in any direction
 - [x] Grid view supports touch/swipe drag on mobile devices
-- [x] Drag cursor affordance shown on hover/drag start (per Figma drag icon)
-- [x] Canvas has infinite/loose bounds (no hard edges that abruptly stop)
+- [x] Drag cursor affordance shown on hover/drag start: a circular badge with a drag-hand icon and "Drag" label, per `drag icon.png` (two states, idle/active, swapped between)
+- [x] Canvas has infinite/loose bounds (no hard edges that abruptly stop) — genuinely infinite, not just a wide-but-finite canvas (see Implementation Summary addendum below)
 - [x] Dragging feels smooth and responsive
 - [x] Drag does not interfere with clicking thumbnails
 - [x] Optional: inertia/momentum on release (nice-to-have)
@@ -148,3 +148,69 @@
       the other (out of bounds + released). Fixed by detecting when the
       momentum branch's projected target got clamped to a bound and using
       the spring-back easing/duration in that case.
+
+## Addendum: Genuinely Infinite Drag + Drag Badge (2026-07-13)
+
+A cross-check against the master spec (`EPICS_AND_STORIES.md`) surfaced two
+real gaps in what this story originally shipped, both closed in this pass:
+
+- **The drag cursor affordance was never actually built.** The original AC
+  text above had been quietly reworded (compare this file's original
+  wording, "(per Figma drag icon)", against `EPICS_AND_STORIES.md`'s own:
+  "a circular badge with a drag-hand icon and 'Drag' label... two states
+  exported — idle and hover/active"), and the shipped implementation was
+  only a plain CSS `cursor: grab`/`grabbing` swap — despite the actual
+  `drag icon.png` design asset already sitting in the repo, unused. Fixed:
+  the sprite was cropped into `public/assets/drag-badge-{idle,active}.png`,
+  and a new `DragBadge` component (`artifact-grid/components/drag-badge`)
+  now follows the cursor while hovering a row (idle state, "Drag" label)
+  and swaps to the active state for the duration of a real drag. Mouse/pen
+  only — there's no hover concept on touch, and Story 4.5's own
+  touch-specific feedback (dimming `opacity` + haptic tick) already covers
+  that input mode.
+- **"Infinite/loose bounds" was implemented as *loose*, not *infinite*.**
+  The original rubber-band-with-a-120px-cap approach gave a proper
+  "no hard edge" feel, but the canvas itself was still a fixed, finite
+  width — and `deferred-work.md` had already flagged the resulting edge
+  case: a wide enough monitor could fit an entire row on-screen with
+  nothing left to drag at all. `useDragPan` was reworked to make the drag
+  genuinely infinite: `ArtifactGridRow` now tiles 7 back-to-back copies of
+  its artifacts (odd, so a single well-defined "real" middle copy exists,
+  centered at rest exactly where the original single copy used to sit),
+  and the hook tracks an ever-growing/shrinking *logical* offset for all
+  its drag-delta/momentum math while only ever writing a value *wrapped*
+  into one repeat period to the track's actual `transform` — since the
+  tiled content repeats exactly every period, the wrap is imperceptible,
+  and the pointer can keep dragging in either direction forever. This
+  supersedes the rubber-band/spring-back mechanism entirely (true infinite
+  tiling has no edge left to spring back from); release momentum is kept,
+  just with nothing to clamp against.
+  - The 6 non-canonical tiled copies are marked `decorative` on
+    `ArtifactThumbnail` (`aria-hidden` + `tabIndex={-1}`) so keyboard/screen
+    reader users still reach exactly one link per artifact regardless of
+    tile count, while every copy stays fully mouse/touch-clickable —
+    verified via Playwright: 5 focusable links + 30 `aria-hidden` links in
+    a 5-item row (6 decorative copies × 5 items).
+  - Verified via Playwright at 1440px, 3440px, and 5120px (5K) viewport
+    widths: dragged the narrowest (3-item) row up to 5000px in a single
+    continuous gesture in both directions, then let release momentum
+    settle — real, correctly-ordered cards fill the entire viewport at
+    every point, with no visible seam or gap, resolving the ultrawide-
+    monitor gap previously logged in `deferred-work.md`.
+  - **Follow-up fix (same day):** infinite tiling initially applied
+    unconditionally, including to a category-filtered grid — visibly wrong
+    for a category with only one or two real artifacts (e.g. filtering to
+    "Architectural," which has exactly two: Mshatta Façade and Minbar),
+    where tiling to fill the canvas reads as an obvious, broken-looking
+    loop ("Mshatta Façade, Minbar, Mshatta Façade, Minbar, …") rather than
+    a large collection. `useDragPan` now takes an explicit `infinite`
+    option and supports both physics side by side: `ArtifactGrid`/
+    `ArtifactGridRow` thread `infinite={category === ALL_OBJECTS_FILTER}`
+    down from `ListPageContent`, so only the unfiltered "All Objects" grid
+    tiles and wraps infinitely — any category filter renders exactly one
+    real, fully-accessible copy of its (possibly very few) artifacts with
+    the original Story 4.1 rubber-band-bounds-and-spring-back behavior
+    restored for that case. Verified via Playwright: filtered to
+    "Architectural" (2 items), dragging 3000px produced a rubber-band-
+    limited ~112px offset (not a wrapped value), while the unfiltered grid
+    dragged the same distance still wraps seamlessly.

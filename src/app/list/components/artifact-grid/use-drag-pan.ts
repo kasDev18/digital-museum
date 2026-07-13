@@ -4,12 +4,14 @@ import { gsap } from '@/lib/gsap-utils'
 
 const DRAG_THRESHOLD_PX = 4
 
-/** iOS `UIScrollView`-style rubber-band constant: the higher this is, the
- * more overshoot tracks the finger 1:1 near the edge; the lower, the more
- * it resists. 0.55 is Apple's own published constant for this formula. */
+/** iOS `UIScrollView`-style rubber-band constant (bounded mode only — see
+ * `UseDragPanOptions.infinite`): the higher this is, the more overshoot
+ * tracks the finger 1:1 near the edge; the lower, the more it resists.
+ * 0.55 is Apple's own published constant for this formula. */
 const RUBBER_BAND_STRENGTH = 0.55
 /** However far past the hard bound the pointer travels, the *visible*
- * overshoot asymptotically approaches this many px and never exceeds it. */
+ * overshoot asymptotically approaches this many px and never exceeds it
+ * (bounded mode only). */
 const MAX_OVERSHOOT_PX = 120
 /** Below this speed (px/ms) a release doesn't bother with momentum — the
  * drag already came to rest, so an inertia tween would be imperceptible. */
@@ -30,15 +32,45 @@ export interface UseDragPanOptions {
    * navigation to a Detail page.
    */
   onDragEnd?: (didDrag: boolean) => void
+  /**
+   * Number of real (non-repeated) items in one "set" — only meaningful (and
+   * only read) when `infinite` is true, where the row renders several
+   * copies of its artifacts back to back (see `ArtifactGridRow`); this is
+   * how many of the track's rendered children make up exactly one copy,
+   * needed to measure the repeat period (see `getBound`).
+   */
+  itemsPerSet: number
+  /**
+   * Selects which of two fundamentally different drag physics this row
+   * uses — see this hook's own doc comment for why category-filtered rows
+   * (few, sometimes just one or two, real artifacts) use `false` while the
+   * unfiltered "All Objects" view uses `true`.
+   */
+  infinite: boolean
 }
 
 /** `(1 - 1 / ((overshoot * strength) / max + 1)) * max` — Apple's own
- * rubber-band easing (from `UIScrollView`'s bounce): overshoot grows
- * quickly at first and flattens out toward `max`, so dragging further past
- * the edge yields diminishing (never zero, never `max`-exceeding) visible
- * movement instead of either a hard stop or unbounded travel. */
+ * rubber-band easing (from `UIScrollView`'s bounce), used only in bounded
+ * mode: overshoot grows quickly at first and flattens out toward `max`, so
+ * dragging further past the edge yields diminishing (never zero, never
+ * `max`-exceeding) visible movement instead of either a hard stop or
+ * unbounded travel. */
 function rubberBand(overshoot: number, max: number) {
   return (1 - 1 / ((overshoot * RUBBER_BAND_STRENGTH) / max + 1)) * max
+}
+
+/** Wraps `value` into `(-period/2, period/2]` — used only in infinite mode,
+ * where the visual position is always equivalent modulo one repeat period
+ * since the track's content repeats every `period` px (see
+ * `ArtifactGridRow`'s tiled copies). `period <= 0` means the measurement
+ * below hasn't found real content yet; returned unchanged rather than
+ * dividing by zero. */
+function wrapOffset(value: number, period: number) {
+  if (period <= 0) return value
+  let wrapped = value % period
+  if (wrapped > period / 2) wrapped -= period
+  else if (wrapped <= -period / 2) wrapped += period
+  return wrapped
 }
 
 /**
@@ -58,14 +90,38 @@ function rubberBand(overshoot: number, max: number) {
  * `isDragging` (which flips at most twice per drag, not once per pixel)
  * goes through `useState`, to drive the grab/grabbing cursor.
  *
- * Two behaviors happen once the pointer lifts, both satisfying Story 4.1's
- * "loose bounds, no hard edges that abruptly stop" acceptance criterion:
- * a drag that overshoots past the track's hard bound (allowed, with
- * resistance, via `rubberBand` above) springs back to that bound; a drag
- * released while still moving fast, but within bounds, keeps coasting
- * (decelerating) via a lightweight momentum tween instead of stopping dead.
+ * Two distinct drag physics live behind the `infinite` option:
+ *
+ * - **`infinite: true`** (the unfiltered "All Objects" grid) — genuinely
+ *   infinite dragging, not just a wide-but-finite canvas, per the brief's
+ *   own "drag the grid view across the screen with infinite drag."
+ *   `ArtifactGridRow` renders several back-to-back copies of its
+ *   artifacts, and this hook tracks an ever-growing/shrinking *logical*
+ *   offset (used for all the drag-delta/momentum math below, exactly as
+ *   if no bound existed) while only ever writing a *wrapped* value (via
+ *   `wrapOffset`) to the track's actual `transform` — since the content
+ *   repeats every `period` px, wrapping the visual position is
+ *   imperceptible, and the pointer can keep dragging in either direction
+ *   forever.
+ * - **`infinite: false`** (any category-filtered grid) — the original
+ *   Story 4.1 "loose bounds" behavior: a single, real copy of the row's
+ *   (possibly very few — sometimes just one or two) artifacts, with
+ *   dragging past either hard edge allowed with resistance
+ *   (`rubberBand`, capped at `MAX_OVERSHOOT_PX`) and a spring-back to that
+ *   edge on release. Tiling a category's artifacts to fill an infinite
+ *   canvas would be actively misleading here rather than a "free-roaming
+ *   gallery" feeling — a 2-artifact category tiled to fill the screen
+ *   reads as an obvious, broken-looking loop ("Mshatta Façade, Minbar,
+ *   Mshatta Façade, Minbar, …") rather than a large collection, so
+ *   filtered rows get the honest, finite affordance instead.
+ *
+ * Both modes keep release momentum (Story 4.1's "nice to have" inertia): a
+ * fast flick keeps coasting and decelerating via a lightweight tween —
+ * with nothing to clamp against in infinite mode, clamped to the bound
+ * (and softened to the same spring-back easing as an out-of-bounds
+ * release, if it lands exactly on that bound) in bounded mode.
  */
-export function useDragPan({ onDragEnd }: UseDragPanOptions = {}) {
+export function useDragPan({ onDragEnd, itemsPerSet, infinite }: UseDragPanOptions) {
   const containerRef = useRef<HTMLDivElement>(null)
   const trackRef = useRef<HTMLDivElement>(null)
   const offsetRef = useRef(0)
@@ -81,20 +137,41 @@ export function useDragPan({ onDragEnd }: UseDragPanOptions = {}) {
     moved: boolean
     // Snapshotted once a real drag starts (see onPointerMove) rather than
     // re-measured via `getBoundingClientRect` on every move and again on
-    // release — the distance between the track's first/last child can't
-    // change mid-gesture (see `getMaxOffset` below), so re-measuring it
-    // dozens of times per second was pure wasted layout work.
-    maxOffset: number
+    // release — the relevant distance (repeat period in infinite mode,
+    // max offset in bounded mode) can't change mid-gesture (see
+    // `getBound` below), so re-measuring it dozens of times per second was
+    // pure wasted layout work.
+    bound: number
     lastMoveTime: number
     lastMoveX: number
     velocity: number
   } | null>(null)
 
-  const getMaxOffset = useCallback(() => {
+  const getBound = useCallback(() => {
     const track = trackRef.current
-    const container = containerRef.current
-    if (!track || !container) return 0
+    if (!track) return 0
 
+    if (infinite) {
+      // The distance between the first item of one tiled copy and the
+      // first item of the next is the repeat period — measuring it via
+      // the *second* copy's own rendered position (rather than, say, the
+      // track's own `scrollWidth`) works regardless of the track's
+      // `justify-content: center` centering, for the same reason bounded
+      // mode's own measurement below does: a *centered* flex box's own
+      // box doesn't grow to reflect symmetric left/right overflow, so
+      // measuring the box itself (or its `scrollWidth`) silently
+      // under-reports the real content width. `transform` moves every
+      // child by the same amount, so this distance stays correct at any
+      // current drag offset.
+      if (itemsPerSet <= 0) return 0
+      const first = track.children.item(0)
+      const nextCopyStart = track.children.item(itemsPerSet)
+      if (!first || !nextCopyStart) return 0
+      return nextCopyStart.getBoundingClientRect().left - first.getBoundingClientRect().left
+    }
+
+    const container = containerRef.current
+    if (!container) return 0
     const first = track.firstElementChild
     const last = track.lastElementChild
     if (!first || !last) return 0
@@ -119,40 +196,53 @@ export function useDragPan({ onDragEnd }: UseDragPanOptions = {}) {
     // their absolute positions) doesn't change as the track is dragged.
     const contentWidth = last.getBoundingClientRect().right - first.getBoundingClientRect().left
     return Math.max(0, (contentWidth - container.clientWidth) / 2)
-  }, [])
+  }, [infinite, itemsPerSet])
 
-  /** Rubber-bands `value` past `max`/`-max` rather than hard-clamping —
-   * always, since the sole caller (`onPointerMove`, mid-drag) always wants
-   * the loose-bounds feel; a hard clamp is applied separately in `endDrag`
-   * once the gesture ends. */
-  const applyOffset = useCallback((value: number, max: number) => {
-    let next = value
-    if (value > max) {
-      next = max + rubberBand(value - max, MAX_OVERSHOOT_PX)
-    } else if (value < -max) {
-      const overshoot = -max - value
-      next = -max - rubberBand(overshoot, MAX_OVERSHOOT_PX)
-    }
+  /** Infinite mode: wraps `value` into the visual transform, storing the
+   * unwrapped logical `value` in `offsetRef` so drag-delta math stays
+   * simple. Bounded mode: rubber-bands `value` past `bound`/`-bound`
+   * rather than hard-clamping (a hard clamp is applied separately in
+   * `endDrag` once the gesture ends) and stores that (already-visual)
+   * value directly in `offsetRef`. */
+  const applyOffset = useCallback(
+    (value: number, bound: number) => {
+      if (infinite) {
+        offsetRef.current = value
+        if (trackRef.current) {
+          trackRef.current.style.transform = `translateX(${wrapOffset(value, bound)}px)`
+        }
+        return
+      }
 
-    offsetRef.current = next
-    if (trackRef.current) {
-      trackRef.current.style.transform = `translateX(${next}px)`
-    }
-  }, [])
+      let next = value
+      if (value > bound) {
+        next = bound + rubberBand(value - bound, MAX_OVERSHOOT_PX)
+      } else if (value < -bound) {
+        next = -bound - rubberBand(-bound - value, MAX_OVERSHOOT_PX)
+      }
+
+      offsetRef.current = next
+      if (trackRef.current) {
+        trackRef.current.style.transform = `translateX(${next}px)`
+      }
+    },
+    [infinite],
+  )
 
   /** Animates the track from wherever it currently sits to `target` —
-   * used both for the past-the-edge spring-back and for release momentum.
-   * Settles instantly (no tween) under `prefers-reduced-motion`. Not routed
-   * through `useGSAP`'s `contextSafe` (this project's usual convention for
-   * event-triggered tweens, see `useExitFadeNavigation`): `contextSafe` only
-   * defers invoking its wrapped function until it's actually called, but
-   * the compiler can't see that through an unrecognized third-party
-   * wrapper, and flags this hook's own `useRef`-created refs as being read
-   * "during render" as a result. The explicit `killTweensOf` cleanup below
-   * covers the same "no leaked tween after unmount" guarantee `contextSafe`
-   * would otherwise provide via GSAP's context revert. */
+   * used for release momentum (both modes) and, in bounded mode only, the
+   * past-the-edge spring-back. Settles instantly (no tween) under
+   * `prefers-reduced-motion`. Not routed through `useGSAP`'s
+   * `contextSafe` (this project's usual convention for event-triggered
+   * tweens, see `useExitFadeNavigation`): `contextSafe` only defers
+   * invoking its wrapped function until it's actually called, but the
+   * compiler can't see that through an unrecognized third-party wrapper,
+   * and flags this hook's own `useRef`-created refs as being read "during
+   * render" as a result. The explicit `killTweensOf` cleanup below covers
+   * the same "no leaked tween after unmount" guarantee `contextSafe` would
+   * otherwise provide via GSAP's context revert. */
   const settle = useCallback(
-    (target: number, { duration, ease }: { duration: number; ease: string }) => {
+    (target: number, bound: number, { duration, ease }: { duration: number; ease: string }) => {
       gsap.killTweensOf(tweenTarget.current)
       tweenTarget.current.x = offsetRef.current
       const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -164,12 +254,15 @@ export function useDragPan({ onDragEnd }: UseDragPanOptions = {}) {
         onUpdate: () => {
           offsetRef.current = tweenTarget.current.x
           if (trackRef.current) {
-            trackRef.current.style.transform = `translateX(${tweenTarget.current.x}px)`
+            const visual = infinite
+              ? wrapOffset(tweenTarget.current.x, bound)
+              : tweenTarget.current.x
+            trackRef.current.style.transform = `translateX(${visual}px)`
           }
         },
       })
     },
-    [],
+    [infinite],
   )
 
   useEffect(() => {
@@ -187,7 +280,7 @@ export function useDragPan({ onDragEnd }: UseDragPanOptions = {}) {
       startX: event.clientX,
       startOffset: offsetRef.current,
       moved: false,
-      maxOffset: 0,
+      bound: 0,
       lastMoveTime: performance.now(),
       lastMoveX: event.clientX,
       velocity: 0,
@@ -221,7 +314,7 @@ export function useDragPan({ onDragEnd }: UseDragPanOptions = {}) {
       // few stray pixels of movement.
       if (!state.moved && Math.abs(dx) > DRAG_THRESHOLD_PX) {
         state.moved = true
-        state.maxOffset = getMaxOffset()
+        state.bound = getBound()
         // A real drag always wins over any in-flight spring-back/momentum
         // tween from a previous release — killed here, not at
         // `onPointerDown` (before a drag vs. a plain click is even known):
@@ -236,6 +329,20 @@ export function useDragPan({ onDragEnd }: UseDragPanOptions = {}) {
         gsap.killTweensOf(tweenTarget.current)
         state.startOffset = offsetRef.current
         setIsDragging(true)
+        // Best-effort haptic confirmation that a drag actually engaged
+        // (Story 4.5's "touch feedback ... if available" AC) — Android
+        // Chrome supports the Vibration API, iOS Safari doesn't define
+        // `navigator.vibrate` at all, so this silently no-ops there rather
+        // than needing its own feature branch. Wrapped in `try` too: some
+        // embedding contexts (e.g. a `Permissions-Policy: vibrate=()`
+        // cross-origin iframe) throw instead of no-opping, and this must
+        // never block the `setPointerCapture` call right below it.
+        try {
+          navigator.vibrate?.(8)
+        } catch {
+          // Best-effort only — a blocked/throwing Vibration API shouldn't
+          // interrupt the drag it was just confirming.
+        }
         // Captured only now, once a real drag is underway: keeps
         // receiving pointermove/pointerup even if the cursor drifts
         // outside the row's bounds mid-drag. Safe to redirect the
@@ -257,10 +364,10 @@ export function useDragPan({ onDragEnd }: UseDragPanOptions = {}) {
       state.lastMoveX = event.clientX
 
       if (state.moved) {
-        applyOffset(state.startOffset + dx, state.maxOffset)
+        applyOffset(state.startOffset + dx, state.bound)
       }
     },
-    [applyOffset, getMaxOffset],
+    [applyOffset, getBound],
   )
 
   const endDrag = useCallback(
@@ -273,14 +380,25 @@ export function useDragPan({ onDragEnd }: UseDragPanOptions = {}) {
       onDragEnd?.(state.moved)
       if (!state.moved) return
 
-      const max = state.maxOffset
       const current = offsetRef.current
-      const outOfBounds = current > max || current < -max
       const velocity =
         performance.now() - state.lastMoveTime > VELOCITY_STALE_MS ? 0 : state.velocity
 
+      if (infinite) {
+        // Nothing to clamp against — the track can coast as far as the
+        // projected velocity carries it, wrapping seamlessly through the
+        // tiled copies the whole way (see `settle`'s `onUpdate`).
+        if (Math.abs(velocity) <= INERTIA_VELOCITY_THRESHOLD_PX_MS) return
+        const projected = current + velocity * INERTIA_PROJECTION_MS
+        settle(projected, state.bound, { duration: 0.6, ease: 'power3.out' })
+        return
+      }
+
+      const max = state.bound
+      const outOfBounds = current > max || current < -max
+
       if (outOfBounds) {
-        settle(Math.min(max, Math.max(-max, current)), { duration: 0.45, ease: 'power2.out' })
+        settle(Math.min(max, Math.max(-max, current)), max, { duration: 0.45, ease: 'power2.out' })
         return
       }
 
@@ -297,11 +415,12 @@ export function useDragPan({ onDragEnd }: UseDragPanOptions = {}) {
         const hitBound = rawProjected !== projected
         settle(
           projected,
+          max,
           hitBound ? { duration: 0.45, ease: 'power2.out' } : { duration: 0.6, ease: 'power3.out' },
         )
       }
     },
-    [onDragEnd, settle],
+    [infinite, onDragEnd, settle],
   )
 
   const onDragStart = useCallback((event: DragEvent<HTMLDivElement>) => {

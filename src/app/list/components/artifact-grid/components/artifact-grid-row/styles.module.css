@@ -8,19 +8,38 @@
    through natively while horizontal drags are handled by the pointer
    handlers instead of the browser's own touch-scroll gesture. */
 .ArtifactGridRow {
-  @apply w-full cursor-grab touch-pan-y overflow-hidden select-none;
+  @apply relative w-full cursor-grab touch-pan-y overflow-hidden select-none;
 }
 
+/* `cursor-grabbing` alone gives mouse users feedback but is invisible on
+   touch (no cursor to change) — a slight `opacity` dip on the row for the
+   duration of the drag instead, driven by `useDragPan`'s `isDragging` React
+   state (not a `:active`/hover pseudo-class), so it works identically for
+   mouse and touch input (Story 4.5's "touch feedback" AC). `opacity`, not
+   `filter: brightness()`: a `filter` forces the browser to rasterize/
+   re-composite its whole subtree through the filter effect on every
+   change, which fights `.ArtifactGridRow_track`'s continuous
+   `transform` writes during the same drag (every `pointermove` tick) —
+   `opacity` is a plain compositor property and composites independently of
+   the track's own transform layer, so it doesn't add per-frame cost to the
+   pan itself (Story 4.5's "60fps during interactions" AC). Applied to the
+   container, not the track — the track's `transform` is written directly
+   by `useDragPan` as an inline style, which would override (and so
+   silently defeat) any `transform` set here, though that's not a concern
+   for `opacity`. */
 .ArtifactGridRow_dragging {
-  @apply cursor-grabbing;
+  @apply cursor-grabbing opacity-95;
 }
 
 /* First row gets extra top clearance, stacked on top of `ListPage`'s own
    `pt-24 sm:pt-28` header-clearance padding, so the row's cards clear the
    fixed `CategoryFilter` bar (Story 4.2) that now floats in that same
-   header-clearance zone (`top-20 sm:top-24`, ~48px tall) rather than the
-   Figma frame's literal 330px (that figure bakes in extra whitespace this
-   reference-based padding doesn't need). Last row gets extra bottom
+   header-clearance zone (`top-20 sm:top-24`, ~56px tall after Story 4.5's
+   44px touch-target bump) rather than the Figma frame's literal 330px
+   (that figure bakes in extra whitespace this reference-based padding
+   doesn't need). Verified via Playwright at desktop/tablet/mobile
+   viewports: 26-43px of clear gap remains between the bar and the first
+   row's cards even at the bar's new height. Last row gets extra bottom
    clearance before the fixed footer, matching the frame's 150px. */
 .ArtifactGridRow_first {
   @apply pt-16 lg:pt-20;

@@ -19,6 +19,16 @@ export interface ArtifactThumbnailProps {
   onClick?: (id: string) => void
   /** Marks this instance for eager/LCP-priority loading — set by the consuming Grid/List layout (Story 3.2/3.3) for above-the-fold thumbnails. */
   priority?: boolean
+  /**
+   * Marks this instance as a duplicate rendered purely so `ArtifactGridRow`
+   * can tile a row for infinite drag (Story 4.1/4.5) — removed from the
+   * accessibility tree (`aria-hidden` + `tabIndex={-1}`) so keyboard/screen
+   * reader users still encounter exactly one focusable link per artifact,
+   * not once per tiled copy, while staying fully mouse/touch-clickable
+   * (the same "hidden from AT, not from pointer input" shape as this
+   * component's own `ArtifactThumbnail_stretchedLink`, Story 3.1).
+   */
+  decorative?: boolean
   className?: string
 }
 
@@ -35,6 +45,7 @@ export function ArtifactThumbnail({
   variant,
   onClick,
   priority,
+  decorative,
   className,
 }: ArtifactThumbnailProps) {
   const imgRef = useRef<HTMLImageElement>(null)
@@ -88,6 +99,8 @@ export function ArtifactThumbnail({
       <Link
         href={href}
         onClick={handleClick}
+        aria-hidden={decorative || undefined}
+        tabIndex={decorative ? -1 : undefined}
         className={cn(styles.ArtifactThumbnail, styles.ArtifactThumbnail_grid, className)}
       >
         {image}

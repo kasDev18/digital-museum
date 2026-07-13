@@ -1,0 +1,16 @@
+@reference "tailwindcss";
+
+/* Positioned via inline `transform` (see `index.tsx`) relative to
+   `ArtifactGridRow`'s own `position: relative` — `top-0 left-0` here is
+   just the transform's origin, the actual on-screen position comes
+   entirely from the `translate(x, y)` the row computes from the pointer's
+   own coordinates every `pointermove`. `pointer-events-none` keeps this
+   purely decorative overlay from ever stealing the drag/click it's
+   illustrating. */
+.DragBadge {
+  @apply pointer-events-none absolute top-0 left-0 z-30 h-16 w-16;
+}
+
+.DragBadge_image {
+  @apply object-contain;
+}
