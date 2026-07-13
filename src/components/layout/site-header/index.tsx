@@ -39,14 +39,6 @@ export function SiteHeader() {
   return (
     <header data-revealed={revealed} data-scrolled={scrolled} className={styles.SiteHeader}>
       <Link href="/" className={styles.SiteHeader_link}>
-        <Image
-          className="md:hidden"
-          src="/assets/logo-mark.svg"
-          alt="logo mark"
-          width={32}
-          height={32}
-          priority
-        />
         <ArtifactaWordmark className={styles.SiteHeader_wordmark} />
         <span className="sr-only">Artifacta</span>
       </Link>

@@ -65,7 +65,7 @@
   /* font-size/line-height (17px/28px = 1.0625rem/28px) per Figma at the lg
      breakpoint; smaller steps below it scale down monotonically (this used
      to peak at sm/md and shrink again at lg, which was backwards). */
-  @apply text-foreground-muted font-serif text-sm leading-[1.647] sm:text-base lg:text-[1.0625rem];
+  @apply text-foreground font-serif text-sm leading-[1.647] sm:text-base lg:text-[1.0625rem];
   /* See `.LandingHero_headline`'s matching comments (blur + color). */
   filter: blur(0px);
   transition: color 0.4s ease;
