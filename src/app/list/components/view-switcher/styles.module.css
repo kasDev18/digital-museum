@@ -7,8 +7,14 @@
    fixed/centered position — see `list-page-content/styles.module.css` —
    so it needs a fill that reads clearly regardless of what's behind it,
    independent of either theme's `background`/`background-elevated`. */
+/* Already >=44px (Story 4.5's minimum touch target: the `h-10` indicator
+   circle plus `p-1.5` padding clears it) — `touch-action: manipulation` +
+   a transparent tap-highlight are the same mobile-tap polish applied to
+   `CategoryFilter_item` below it, for the same reason. */
 .ViewSwitcher {
   @apply focus-visible:outline-navy flex items-center gap-[7px] rounded-full bg-[#c7c6c5] p-1.5 shadow-lg transition-all duration-300 ease-out focus-visible:outline-2 focus-visible:outline-offset-4;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .ViewSwitcher:hover {

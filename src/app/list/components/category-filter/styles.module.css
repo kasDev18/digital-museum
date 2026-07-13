@@ -24,9 +24,17 @@
   display: none;
 }
 
+/* `min-h-11` (44px) meets Story 4.5's minimum touch-target size — `py-2`
+   alone (~36px) fell short. `touch-action: manipulation` removes the
+   ~300ms tap delay/double-tap-zoom mobile browsers otherwise apply to
+   plain taps, and `-webkit-tap-highlight-color: transparent` swaps out
+   Safari/Chrome's default gray tap flash for this bar's own intentional
+   hover/selected-pill feedback below. */
 .CategoryFilter_item {
-  @apply text-navy shrink-0 rounded-full px-3.5 py-2 font-serif text-sm font-medium whitespace-nowrap transition-colors duration-200;
+  @apply text-navy flex min-h-11 shrink-0 items-center justify-center rounded-full px-3.5 py-2 font-serif text-sm font-medium whitespace-nowrap transition-colors duration-200;
   @apply focus-visible:outline-navy focus-visible:outline-2 focus-visible:outline-offset-2;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .CategoryFilter_item:hover {

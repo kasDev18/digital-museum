@@ -10,6 +10,14 @@ import styles from './styles.module.css'
 
 export interface ArtifactGridProps {
   artifacts: Artifact[]
+  /**
+   * Whether every row should drag with genuinely infinite wrap-around
+   * content — true for the unfiltered "All Objects" view, false whenever a
+   * category filter is active (see `useDragPan`'s doc comment for why a
+   * filtered handful of artifacts gets the original loose-bounds behavior
+   * instead of being tiled to fill an infinite canvas).
+   */
+  infinite: boolean
 }
 
 /**
@@ -33,8 +41,13 @@ const ROW_SIZES = [5, 4, 3]
  * page's native scroll. Cards fade/slide in as they scroll into view, and
  * fade/slide out (continuing upward) just before navigating to a Detail
  * page — see `useScrollReveal` and `useExitFadeNavigation`.
+ *
+ * `infinite` (threaded down to every row) switches between genuinely
+ * infinite wrap-around dragging (unfiltered) and the original finite,
+ * rubber-banded bounds (any category filter) — see `useDragPan`'s doc
+ * comment for why.
  */
-export function ArtifactGrid({ artifacts }: ArtifactGridProps) {
+export function ArtifactGrid({ artifacts, infinite }: ArtifactGridProps) {
   const container = useRef<HTMLDivElement>(null)
   useScrollReveal(container, '.artifact-reveal')
   const exitFadeClick = useExitFadeNavigation(container, '.artifact-reveal')
@@ -85,6 +98,7 @@ export function ArtifactGrid({ artifacts }: ArtifactGridProps) {
           artifacts={row}
           isFirstRow={rIndex === 0}
           isLastRow={rIndex === rows.length - 1}
+          infinite={infinite}
           onDragEnd={handleRowDragEnd}
         />
       ))}
