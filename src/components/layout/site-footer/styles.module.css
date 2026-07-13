@@ -50,7 +50,7 @@
 }
 
 .SiteFooter_copyright {
-  @apply text-foreground-muted;
+  @apply text-foreground;
   /* `CopyrightMark`'s `fill="currentColor"` follows this inherited `color` —
      same reasoning as `SiteHeader_wordmark`'s matching transition. */
   transition: color 0.4s ease;
