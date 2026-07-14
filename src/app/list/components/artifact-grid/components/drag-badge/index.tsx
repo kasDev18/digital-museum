@@ -1,3 +1,4 @@
+import { forwardRef } from 'react'
 import Image from 'next/image'
 import styles from './styles.module.css'
 
@@ -20,10 +21,19 @@ export interface DragBadgeProps {
  * never intercept the drag/click it's illustrating, and `aria-hidden`
  * since it's a purely decorative pointer affordance with no information
  * not already available to keyboard/screen-reader users another way.
+ *
+ * Forwards its root node's ref so `ArtifactGridRow` can write `transform`
+ * to it directly on every `pointermove` instead of round-tripping the
+ * cursor position through React state on every pixel of movement — see
+ * that component's own comment on `handlePointerMove` for why.
  */
-export function DragBadge({ x, y, variant }: DragBadgeProps) {
+export const DragBadge = forwardRef<HTMLDivElement, DragBadgeProps>(function DragBadge(
+  { x, y, variant },
+  ref,
+) {
   return (
     <div
+      ref={ref}
       aria-hidden="true"
       className={styles.DragBadge}
       style={{ transform: `translate(calc(${x}px - 50%), calc(${y}px - 50%))` }}
@@ -37,4 +47,4 @@ export function DragBadge({ x, y, variant }: DragBadgeProps) {
       />
     </div>
   )
-}
+})

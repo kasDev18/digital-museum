@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import type { PointerEvent } from 'react'
 import type { Artifact } from '@/types/artifact'
 import { ArtifactThumbnail } from '@/app/list/components/artifact-thumbnail'
@@ -85,10 +85,22 @@ export function ArtifactGridRow({
     onDragStart,
   } = useDragPan({ onDragEnd, itemsPerSet: artifacts.length, infinite })
 
-  // Cursor-following `DragBadge` position, relative to this row's own
-  // container — `null` whenever the badge shouldn't render at all (touch
-  // input, or the pointer isn't currently over this row).
-  const [badgePos, setBadgePos] = useState<{ x: number; y: number } | null>(null)
+  // Cursor-following `DragBadge` — whether it should be mounted at all
+  // (touch input, or the pointer isn't currently over this row, both keep
+  // it unmounted) and, only for the render that first mounts it, its
+  // starting position. Position updates for an *already-mounted* badge are
+  // deliberately not state: at up to 60-120 pointermove events/sec,
+  // round-tripping the cursor position through `useState` would re-render
+  // (and reconcile) this row's whole tile track — up to `TILE_COUNT *
+  // artifacts.length` thumbnails in infinite mode — on every pixel of
+  // mouse movement. Instead, once mounted, `badgeElRef` lets
+  // `handlePointerMove` write straight to the DOM node's own `transform`,
+  // bypassing React entirely for the high-frequency case; only the
+  // mount/unmount toggle (and the one render it causes) goes through
+  // state, since that's a real, comparatively rare tree change.
+  const [badgeVisible, setBadgeVisible] = useState(false)
+  const [badgeInitialPos, setBadgeInitialPos] = useState({ x: 0, y: 0 })
+  const badgeElRef = useRef<HTMLDivElement>(null)
 
   const handlePointerMove = useCallback(
     (event: PointerEvent<HTMLDivElement>) => {
@@ -99,13 +111,20 @@ export function ArtifactGridRow({
       // meaningful to follow.
       if (event.pointerType === 'mouse') {
         const rect = event.currentTarget.getBoundingClientRect()
-        setBadgePos({ x: event.clientX - rect.left, y: event.clientY - rect.top })
+        const x = event.clientX - rect.left
+        const y = event.clientY - rect.top
+        if (badgeElRef.current) {
+          badgeElRef.current.style.transform = `translate(calc(${x}px - 50%), calc(${y}px - 50%))`
+        } else {
+          setBadgeInitialPos({ x, y })
+          setBadgeVisible(true)
+        }
       }
     },
     [onPointerMove],
   )
 
-  const handlePointerLeave = useCallback(() => setBadgePos(null), [])
+  const handlePointerLeave = useCallback(() => setBadgeVisible(false), [])
 
   const tileCount = infinite ? TILE_COUNT : 1
   const centerTileIndex = infinite ? CENTER_TILE_INDEX : 0
@@ -146,8 +165,13 @@ export function ArtifactGridRow({
           }),
         )}
       </div>
-      {badgePos && (
-        <DragBadge x={badgePos.x} y={badgePos.y} variant={isDragging ? 'active' : 'idle'} />
+      {badgeVisible && (
+        <DragBadge
+          ref={badgeElRef}
+          x={badgeInitialPos.x}
+          y={badgeInitialPos.y}
+          variant={isDragging ? 'active' : 'idle'}
+        />
       )}
     </div>
   )
