@@ -17,13 +17,13 @@ export const ARTIFACT_TYPES = [
 export type ArtifactType = (typeof ARTIFACT_TYPES)[number]
 
 export interface ArtifactContributor {
-  name: string // e.g. "Mansoor Alemy"
-  quote: string // pull-quote, e.g. "These scenes of creatures drinking water from one fountain together; for me, it shows peace."
+  name: string
+  quote: string // pull-quote shown alongside the contributor's name
   story?: string // personal/migration narrative paragraph shown below the factual description
 }
 
 export interface ArtifactJourneyStop {
-  country: string // e.g. "Myanmar"
+  country: string
   flag: string // ISO 3166-1 alpha-2 country code for flag icon, e.g. "MM"
 }
 
