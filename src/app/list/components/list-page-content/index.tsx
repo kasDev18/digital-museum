@@ -116,13 +116,7 @@ export function ListPageContent({ artifacts }: ListPageContentProps) {
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
   const [category, setCategory] = useState<ArtifactTypeFilter>(ALL_OBJECTS_FILTER)
 
-  // Skips the write effect below exactly once, on whichever render first
-  // commits after mount — that render's `viewMode`/`category` are either
-  // still the untouched Grid/All-Objects defaults (nothing was stored) or
-  // the value the restore effect just read *from* storage a moment ago;
-  // either way, writing them back is a pure no-op, so skipping it halves
-  // the storage I/O on every page load without losing anything a real
-  // change wouldn't already re-trigger.
+  // Skips the write effect's first post-mount run — see the doc comment above.
   const skipNextPersist = useRef(true)
 
   useEffect(() => {
