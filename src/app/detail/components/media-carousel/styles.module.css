@@ -79,14 +79,39 @@
 
 .MediaCarousel_image {
   @apply h-full w-full object-cover;
+  transition: transform 0.2s ease;
 }
 
-/* Fixed dark-on-white treatment (not the theme's `--background`/
-   `--foreground` tokens) — this overlay sits on top of unpredictable photo
-   content, not the page's own chrome, so it stays legible the same way in
-   both the light and dark site themes, matching the dots below. */
+@media (prefers-reduced-motion: reduce) {
+  .MediaCarousel_image {
+    transition: none;
+  }
+}
+
+/* Story 5.4's zoom in/out overlay — top-right, since bottom-left/bottom-right
+   are already the dots/"More Images" controls above. Fixed cream-on-photo
+   treatment (not the theme's `--background`/`--foreground` tokens) per the
+   Mshatta Façade detail mock — a light `bg-cream`/`text-navy` pill, same
+   as "More Images" below, not the dark-on-white overlay this project uses
+   elsewhere (e.g. the List page's own dark scrim controls); it sits on
+   top of unpredictable photo content, so it stays legible the same way in
+   both the light and dark site themes regardless. */
+.MediaCarousel_zoom {
+  @apply absolute top-4 right-4 flex items-center gap-1.5;
+}
+
+.MediaCarousel_zoomButton {
+  @apply bg-cream text-navy flex h-9 w-9 items-center justify-center rounded-full shadow-md transition-transform hover:scale-[1.08] active:scale-[0.95] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:scale-100 disabled:active:scale-100;
+}
+
+.MediaCarousel_zoomIcon {
+  @apply h-4 w-4;
+}
+
+/* Same fixed cream-on-photo treatment as the zoom overlay above — see
+   its own comment. */
 .MediaCarousel_more {
-  @apply absolute right-4 bottom-4 flex items-center gap-1.5 rounded-full bg-black/60 px-4 py-2 text-sm font-medium text-white shadow-md backdrop-blur-sm transition-transform hover:scale-[1.03] active:scale-[0.97];
+  @apply bg-cream text-navy absolute right-4 bottom-4 flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium shadow-md transition-transform hover:scale-[1.03] active:scale-[0.97];
 }
 
 .MediaCarousel_moreIcon {

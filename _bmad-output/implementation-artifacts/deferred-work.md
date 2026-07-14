@@ -2,6 +2,61 @@
 
 Findings from code review that are real but not actionable in the story that surfaced them — pre-existing patterns, out-of-scope items, or theoretical edge cases disproportionate to fix now.
 
+## Deferred from: final review pass on Stories 5.3/5.4, before commit (2026-07-14)
+
+An 8-angle adversarial review ran against the full working-tree diff before
+commit. Two real regressions it caught were fixed immediately (see
+`story-5-3-add-audio-controls.md`'s Implementation Summary for detail):
+`AudioPlayer`'s play/pause button had regressed from a uniform 40px touch
+target to 36px on mobile during the mock-matching pass (reverted to 40px),
+and the seek scrubber's `focus-visible` outline never actually rendered —
+`outline-none` sets Tailwind v4's `--tw-outline-style` custom property to
+`none` on the element, and `focus-visible:outline-2` only reads that same
+variable rather than resetting it, so the ring stayed invisible even once
+focused (fixed by using `outline-0` instead, which zeroes the width but
+leaves the style variable at its default `solid`).
+
+**Not fixed, flagged for a follow-up:** `MediaCarousel`'s own `.MediaCarousel`
+rule (`src/app/detail/components/media-carousel/styles.module.css`, Story
+5.2, untouched by this pass) has the exact same `outline-none` +
+`focus-visible:outline-2` pattern and the same broken-focus-ring bug,
+confirmed empirically with the same test used to catch the `AudioPlayer`
+instance — tabbing to focus the carousel frame shows no visible ring. Left
+alone here since it predates this diff and fixing it means touching a
+component this pass didn't otherwise change; the fix is the same one-line
+`outline-0` swap once someone picks it up.
+
+**Noted but not acted on** (lower priority, verified working correctly —
+readability/reuse observations, not bugs): `MediaCarousel`'s `zoomIn`/
+`zoomOut` reimplement the same clamp-and-round-to-avoid-float-drift shape
+already factored out as `clampFontScale` in `src/lib/theme-script.ts`; and
+the zoom-resets-on-slide-change mechanism (two state atoms plus an
+in-render index comparison) could be simplified to a `key`-based remount,
+though the current version is tested and correct.
+
+## Resolved: `media` arrays trimmed to match backed files, fixing a real "carousel looks broken" bug (2026-07-14)
+
+The "still unbacked" `2.jpg`/`3.jpg` entries noted just below weren't only
+a cosmetic gap — they were a real functional bug. `MediaCarousel`'s
+`onError` handler correctly hides a 404ing slide behind the frame's plain
+`bg-background-elevated` backdrop (its own documented, intentional
+behavior), but that meant clicking "More Images" on any of the 7 affected
+artifacts eventually landed on a slide with **no image at all** — an
+empty navy box, with the dot indicator, "More Images" button, and zoom
+overlay all still present and functional. The underlying navigation logic
+(dots, arrow keys, swipe, "More Images", zoom) was verified correct in
+every case via Playwright; the dataset was just promising more images
+than exist on disk. Fixed by trimming each affected artifact's `media`
+array in `src/data/mock-data.ts` down to only the files confirmed present
+in `public/images/artifacts/<id>/` (verified programmatically, path by
+path, not by re-eyeballing the list): `wooden-chest`, `vyshyvanka`,
+`mbira`, and `jamdani` dropped from 2-3 declared entries to 1 (their
+`media` array now equals `[thumbnail-adjacent 1.jpg]`, same shape as
+`bamboo-pen`'s pre-existing single-item case); `carnival-mask`,
+`mshatta-facade`, and `tatreez-thobe` dropped their undeclared `3.jpg`
+entry, keeping `1.jpg`/`2.jpg`. `beaded-gown`, `lei-poo`, `minbar`, and
+`backgammon-board` already matched reality and needed no change.
+
 ## Resolved: `media` images backfilled for all 12 artifacts (2026-07-14)
 
 The user supplied two batches of real photos, both exported from a design/
@@ -20,14 +75,46 @@ Thobe, Lei Po'o, Beaded Gown, Mshatta Façade, Carnival Mask). Both raw
 source folders (`images/`, `images2/`, repo root, untracked) were deleted
 once their content was extracted, per explicit instruction.
 
-**Still unbacked:** Wooden Chest/Carnival Mask/Mshatta Façade/Tatreez
-Thobe's `3.jpg` (4 artifacts declare a 3rd media entry), Vyshyvanka/
-Mbira/Jamdani's `2.jpg` (not covered by either supplied batch), and every
-`audioUrl` — the bullet below still applies to those. One image from the
-second batch (a ceramic/glazed surface with a carved fern-leaf motif) was
-**not** assigned to any artifact — it didn't visually match any of the 12
-mock artifacts' actual subjects, and forcing a guess seemed worse than
-leaving it out; flag if it belongs somewhere.
+**Still unbacked:** every `audioUrl` — the bullet below still applies to
+those. The `3.jpg`/second-`2.jpg` gaps this note originally flagged
+(Wooden Chest/Carnival Mask/Mshatta Façade/Tatreez Thobe's `3.jpg`,
+Vyshyvanka/Mbira/Jamdani's `2.jpg`) are resolved above, by trimming the
+dataset's own claims to match rather than sourcing more photos. One image
+from the second batch (a ceramic/glazed surface with a carved fern-leaf
+motif) was **not** assigned to any artifact — it didn't visually match
+any of the 12 mock artifacts' actual subjects, and forcing a guess seemed
+worse than leaving it out; flag if it belongs somewhere.
+
+## Resolved: Stories 5.3/5.4 — AudioPlayer waveform/mute, MediaCarousel zoom (2026-07-14)
+
+Both bullets below (from "Deferred from: story-5-1/story-5-2") are now
+addressed:
+
+- **`AudioPlayer`'s tick-mark waveform scrubber and mute/unmute toggle**
+  (previously Story 5.3's own deferred scope) are implemented — a
+  decorative, evenly-spaced-tick visualization layered behind the
+  existing native range input (no change to its seek/drag/keyboard
+  behavior), plus a mute button driving `audio.muted` directly. See
+  `story-5-3-add-audio-controls.md`'s own Implementation Summary for
+  the full detail.
+- **`MediaCarousel` now has zoom in/out controls** (previously flagged as
+  simply absent, not a deferred item in its own right, but the natural
+  follow-on once Story 5.4 was in scope) — a top-right overlay pair, CSS
+  `transform: scale` on the active slide only, 0.5x-3x range, resets on
+  every slide change. See `story-5-4-add-zoom-controls.md`'s own
+  Implementation Summary.
+
+**Still open from that same pass** (neither story above addressed
+these): the `SiteHeader` sound-icon ambiguity, the unbacked `audioUrl`
+mock assets (the sibling `media` gap is now resolved, see the entry above
+this section), `MediaCarousel`'s lack of a dedicated arrow-button
+overlay, and `getNextArtifact`'s dataset-order-not-filtered-view behavior
+— all still apply exactly as described below. Newly deferred by this same
+pass: pan-while-zoomed and pinch-to-zoom (both explicitly optional/stretch
+in Story 5.4's own Technical Notes), and the "Listen to his story…"
+copy-as-CTA suggestion from Story 5.3's AC (a content/copywriting change
+to the mock dataset's description text, not a component behavior — no
+artifact description currently uses that phrasing).
 
 ## Deferred from: post-review visual polish pass on story-5-1/story-5-2 (2026-07-13)
 
