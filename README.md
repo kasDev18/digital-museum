@@ -267,6 +267,140 @@ The 7 categories live in a single source of truth, `ARTIFACT_TYPES` (`src/types/
 - **`useExitFadeNavigation(scope, revealSelector)`** (`src/lib/gsap-utils.ts`): the List page's equivalent of `LandingHero`'s own click-triggered exit animation — intercepts a click on any `<a href="/detail/...">` inside `scope`, fades/slides matching elements out, then navigates once settled. Must be wired to a container's `onClickCapture`, not `onClick` — `next/link` attaches its own `onClick` directly to the anchor and navigates immediately unless the event is already `defaultPrevented` by the time that handler runs; a capture-phase listener (root-to-target) runs _before_ the anchor's own listener, so `stopPropagation()` there is what actually stops `next/link` from taking over. A bubble-phase listener on an ancestor fires _after_ the anchor's own (target-to-root order) and is too late.
 - **Reference:** See [`docs/gsap-performance.md`](./docs/gsap-performance.md) for the full performance/usage guide, and visit `/gsap-demo` in dev for a working ScrollTrigger example (`src/components/gsap-scroll-demo/index.tsx`)
 
+## ✅ QA & Delivery (Epic 6, Stories 6.1-6.6)
+
+A dedicated QA pass ran across the full codebase — three independent read-only
+audits (responsive/breakpoint, animation performance, cross-browser
+compatibility) plus a lint/type/build sweep — before this project's submission.
+Real findings were fixed directly; everything else is recorded below rather
+than silently dropped.
+
+- **Story 6.1 (cross-breakpoint responsive QA):** one real bug found and
+  fixed — `ListBackground` (`src/app/list/components/list-background`) is
+  `position: fixed` and wider than the viewport below `lg` (900px at mobile),
+  which caused genuine horizontal page scroll on the List route at every
+  breakpoint (a `fixed` element escapes an ancestor's own `overflow-hidden`
+  unless that ancestor is itself a containing block for fixed positioning).
+  Fixed by adding `overflow-x: hidden` to `body` in `src/app/globals.css` —
+  the one place that reliably clips a fixed-position descendant regardless of
+  which route renders it. Everything else audited (touch/pointer handling,
+  image `sizes`/fallbacks, rem-based type scaling, other absolutely-positioned
+  decorative elements) checked out with no changes needed. This was a static
+  code-level audit rather than literal Chrome DevTools device emulation or
+  physical-device testing — it's how the bug above was actually found, but
+  see "Known Issues & Limitations" below for the honest caveat.
+- **Story 6.2 (animation performance pass):** `ArtifactGridRow`'s
+  cursor-following `DragBadge` (Story 4.1) was calling `setBadgePos` — a React
+  state update — on every `pointermove` while dragging/hovering a row, up to
+  60-120 times/sec, re-rendering and reconciling the whole tile track (up to
+  `TILE_COUNT × artifacts.length` thumbnails in infinite mode) on every pixel
+  of mouse movement. Fixed by making `DragBadge` forward a ref
+  (`src/app/list/components/artifact-grid/components/drag-badge`) so
+  `ArtifactGridRow` writes `transform` straight to its DOM node for
+  already-mounted updates, only touching React state for the (rare)
+  mount/unmount toggle. Every other animation path — the disc rotation,
+  `useScrollReveal`'s `ScrollTrigger.batch()` reveals, the drag/pan track
+  itself, `MediaCarousel`'s CSS transitions — was confirmed transform/opacity-
+  only with proper GSAP context cleanup, matching `docs/gsap-performance.md`'s
+  own stated conventions.
+- **Story 6.3 (cross-browser compatibility check):** a static audit of every
+  browser-sensitive API in `src/` (Pointer Events/`setPointerCapture`,
+  `navigator.vibrate`, WebKit-prefixed CSS, `<audio>` codec usage, React's
+  `<ViewTransition>`) found no unguarded compatibility risk — everything is
+  already feature-detected or has a documented fallback. No code changes were
+  needed; actually launching Chrome/Firefox/Safari/Edge to confirm is a manual
+  step outside what a static review can substitute for.
+- **Story 6.4 (code quality and architecture review):** removed one unused
+  `Image` import (`src/components/layout/site-header`) that was the only
+  outstanding ESLint warning; `pnpm lint`, `pnpm ts:check` (strict mode), and
+  `pnpm build` all pass clean. Also closed out a bug already flagged in
+  `_bmad-output/implementation-artifacts/deferred-work.md` — `MediaCarousel`'s
+  focus ring never rendered (`outline-none` zeroes Tailwind's
+  `--tw-outline-style` variable, which `focus-visible:outline-2` only reads
+  rather than resets) — with the same one-line `outline-0` swap already
+  applied to `AudioPlayer`'s scrubber.
+- **Story 6.5:** this section, the "Known Issues & Limitations" section below,
+  and the "Challenges & Trade-offs" section are that story's deliverable.
+- **Story 6.6 (repository cleanup):** removed an orphaned, unreferenced
+  `Group 4.svg` Figma export from the repo root (not imported anywhere in
+  `src/`, not documented as an intentionally-kept reference asset like the
+  ones under the gitignored `digital-museum/` folder). Verified no secrets or
+  credentials are tracked, `node_modules`/build output/generated files are
+  all correctly gitignored, and the existing `src/app` → `src/components` →
+  `src/data`/`lib`/`types` structure (see the "Project Structure" section
+  above) needed no further reorganizing.
+
+## ⚠️ Known Issues & Limitations
+
+Honest, as-of-submission gaps — most already tracked in day-to-day detail in
+`_bmad-output/implementation-artifacts/deferred-work.md`, summarized here:
+
+- **Epic 5 (Details Page) is stretch scope and only partially built.**
+  Stories 5.1-5.4 (layout, media carousel, audio controls, zoom controls) are
+  done; Stories 5.5-5.8 (PDF download, comment affordance, migration journey
+  widget, dedicated responsive polish pass) remain `ready-for-dev` and were
+  not attempted, per this project's own priority order (required Epics 1-4 +
+  6 first, Epic 5 only if time permitted).
+- **Every mock artifact's `audioUrl` is unbacked by a real audio file.**
+  Pressing play on any artifact throws a `NotSupportedError` in the console
+  (handled gracefully — the play/pause toggle just never flips to "playing"
+  rather than crashing); `AudioPlayer`'s tick-mark waveform is a stylized
+  readout of `currentTime`/`duration`, not a real waveform analysis, since
+  there's no audio to analyze yet.
+- **`SiteHeader`'s intended small circular icon (next to the wordmark in every
+  captured mock) was never built.** Its behavior — global mute toggle,
+  read-aloud entry point, or purely decorative brand mark — isn't specified
+  in any story's acceptance criteria, so it was flagged rather than guessed
+  at; still open pending a product decision.
+- **`MediaCarousel` has no dedicated left/right arrow-button overlay**,
+  relying on the "More Images" button, dot indicators, arrow keys, and touch
+  swipe instead — a deliberate mock-fidelity call (the Figma mock itself has
+  no visible arrows), not an oversight.
+- **The Detail page's "Next story" action always follows the mock dataset's
+  own fixed order**, ignoring whichever category filter the visitor arrived
+  from on the List page — matches Story 5.1's Technical Notes exactly, but
+  can jump between unrelated categories if Epic 5 continues.
+- **No automated test suite is configured** (no Jest/Vitest/Playwright-test
+  dependency in `package.json`). Correctness for this pass was verified via
+  `pnpm lint`/`pnpm ts:check`/`pnpm build` plus manual and Playwright-assisted
+  interaction testing during earlier stories — see each story's own
+  Implementation Summary in `_bmad-output/implementation-artifacts/`.
+- **Stories 6.1 and 6.3's QA passes were static code audits, not literal
+  device/browser testing** — no browser-automation tooling (Playwright,
+  Puppeteer) or real devices/browsers beyond the running Chrome-based dev
+  server were available in the environment these passes ran in. Both found
+  and fixed genuine issues this way (the `ListBackground` horizontal-scroll
+  bug, in particular, was caught exactly this way), but resizing a live
+  viewport across real devices and opening Firefox/Safari/Edge directly are
+  still worthwhile manual follow-ups if this project is picked up again
+  with access to them.
+
+## 🚧 Challenges & Trade-offs
+
+- **4-day deadline (project start → July 15, 2026) drove an explicit scope
+  order:** required Epics 1-4 (Landing + List pages) and Epic 6 (QA &
+  Delivery) came first; Epic 5 (Details Page) was stretch-only and time-boxed
+  to whatever remained, which is why it stopped at Story 5.4.
+- **Mock artifact media/audio arrived from a design/gallery export with
+  generic or mismatched filenames** (e.g. files literally named
+  `Beaded_Hooded_Gown_*.png` that actually depicted seven different other
+  artifacts). Each image was identified by visual content, not filename, and
+  re-encoded to match the existing thumbnail convention; two artifacts'
+  declared `media` arrays were trimmed down to match what could actually be
+  sourced rather than shipping entries that would 404 (see
+  `deferred-work.md`'s "media arrays trimmed" entry for the full detail).
+- **No CMS/backend, by design** — the assessment's own architectural decision
+  was a static, mock-data-driven build (`src/data/mock-data.ts`), so "content
+  editing" is a code change, not a content-management workflow. This keeps
+  the stack small (no database, no API layer) at the cost of that
+  flexibility.
+- **This codebase carries an unusually thorough paper trail of deferred,
+  reviewed-but-intentionally-unfixed findings** (`deferred-work.md`) — the
+  project's own convention has been to record a finding and its reasoning
+  rather than either silently skip it or scope-creep a story to fix
+  something outside its own acceptance criteria. Story 6.4's review is a
+  continuation of that same discipline, not a one-off audit.
+
 ## 🧪 Development Workflow
 
 1. **Feature Development:** Create components in appropriate directories
@@ -317,11 +451,17 @@ Ensure the platform supports:
 
 ## 🎯 Project Status
 
-- **Current Phase:** Development
+- **Current Phase:** QA & Delivery (Epic 6) complete — required scope done
 - **Deadline:** July 15, 2026
 - **Priority:** Landing Page & List Page (Required), Details Page (Optional/Stretch)
-- **Details Page:** Stories 5.1 (layout), 5.2 (media carousel), 5.3 (audio player fidelity), and 5.4 (zoom controls) done; 5.5-5.8 (download, comment, migration journey, responsive polish) remain stretch scope
-- **Branch:** `docs/add-bmad-stories`
+- **Required scope (Epics 1-4 + 6):** done — Landing page, List page, and QA &
+  Delivery (cross-breakpoint QA, animation performance, cross-browser
+  compatibility, code quality review, this README pass, repository cleanup)
+- **Details Page (Epic 5, stretch):** Stories 5.1 (layout), 5.2 (media
+  carousel), 5.3 (audio player fidelity), and 5.4 (zoom controls) done;
+  5.5-5.8 (download, comment, migration journey, responsive polish) remain
+  stretch scope — see the "Known Issues & Limitations" section above
+- **Branch:** `feat/epic-6-qa-delivery-review`
 
 ---
 

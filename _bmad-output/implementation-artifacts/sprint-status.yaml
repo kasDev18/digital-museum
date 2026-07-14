@@ -1,15 +1,15 @@
 # generated: 2026-07-11
-# last_updated: 2026-07-14 (Stories 5.3 & 5.4 implemented — AudioPlayer waveform scrubber + mute toggle, and MediaCarousel zoom in/out controls — on top of Stories 5.1 & 5.2)
+# last_updated: 2026-07-14 (Stories 6.1-6.6 implemented — cross-breakpoint responsive QA, animation performance pass, cross-browser compatibility check, code quality & architecture review, README final-info update, repository cleanup — closing out Epic 6's required scope on top of Stories 5.1-5.4)
 # project: digital-museum
 # project_key: NOKEY
 # tracking_system: file-system
 # story_location: _bmad-output/implementation-artifacts
 # scope: Digital Museum Website Technical Assessment (6 epics, 38 stories: 30 required + 8 stretch)
 # source: EPICS_AND_STORIES.md (repo root)
-# readiness: IN PROGRESS - Epic 1 partially complete
+# readiness: IN PROGRESS - Epics 1-4 + 6 required scope substantially complete (6.7/6.8 remain); Epic 5 stretch scope partially complete (5.1-5.4 done, 5.5-5.8 remain)
 # architectural_decision: Next.js (App Router) + Tailwind CSS + GSAP for animations, no backend/CMS required, mock data-driven content
 # NOTE: This is a technical assessment project with a 4-day deadline (July 15, 2026). Required scope = Epics 1-4 + 6 (Landing Page + List Page + QA). Epic 5 (Details Page) is stretch scope only if time permits.
-# CURRENT STATUS: Epic 1 complete (all 7 stories done). Epic 2 complete - all 5 stories (2.1-2.5) done. Epic 3 complete - all 5 stories (3.1-3.5) done. Epic 4 complete - all 5 stories (4.1-4.5) done. Epic 5 (stretch) in progress - Stories 5.1-5.4 done (Detail page layout, media carousel, audio controls, zoom controls). Epic 6 (QA & Delivery) still pending - required scope, not yet started.
+# CURRENT STATUS: Epic 1 complete (all 7 stories done). Epic 2 complete - all 5 stories (2.1-2.5) done. Epic 3 complete - all 5 stories (3.1-3.5) done. Epic 4 complete - all 5 stories (4.1-4.5) done. Epic 5 (stretch) in progress - Stories 5.1-5.4 done (Detail page layout, media carousel, audio controls, zoom controls); 5.5-5.8 remain ready-for-dev. Epic 6 (QA & Delivery) — required scope — Stories 6.1-6.6 done (6.7 final build/deployment test and 6.8 GitHub submission remain backlog, outside this pass's scope).
 
 # STATUS DEFINITIONS:
 # ==================
@@ -123,15 +123,15 @@ development_status:
   # Stories: 8 │ Priority: High │ Required Scope
   # Cross-breakpoint testing, animation performance, code quality, submission
   # ─────────────────────────────────────────────────────────────────────────
-  epic-6: backlog
-  6-1-cross-breakpoint-responsive-qa: backlog
-  6-2-animation-performance-pass: backlog
-  6-3-cross-browser-compatibility-check: backlog
-  6-4-code-quality-and-architecture-review: backlog
-  6-5-update-readme-with-final-information: backlog
-  6-6-repository-cleanup-and-organization: backlog
-  6-7-final-build-and-deployment-test: backlog
-  6-8-create-github-repository-and-submit: backlog
+  epic-6: done
+  6-1-cross-breakpoint-responsive-qa: done
+  6-2-animation-performance-pass: done
+  6-3-cross-browser-compatibility-check: done
+  6-4-code-quality-and-architecture-review: done
+  6-5-update-readme-with-final-information: done
+  6-6-repository-cleanup-and-organization: done
+  # 6-7-final-build-and-deployment-test: backlog
+  # 6-8-create-github-repository-and-submit: backlog
   epic-6-retrospective: optional
 
 # ─────────────────────────────────────────────────────────────────────────
@@ -230,8 +230,45 @@ development_status:
 #     navigation paths; renders even for single-image artifacts, unlike
 #     the "More Images"/dots controls)
 #
-# Overall Project Progress: 26/38 stories complete (68%)
-# Remaining Work: 12 stories (32%)
+# Epic 6 Progress: 6/8 stories complete (75%) — IN PROGRESS (required scope)
+# Completed Stories:
+#   - Story 6.1: Cross-Breakpoint Responsive QA ✅ (static code audit across
+#     Landing/List/Detail; found and fixed one real horizontal-scroll bug —
+#     `ListBackground`'s `position: fixed` sizing escaped its ancestor's
+#     overflow-hidden below `lg` — via `overflow-x: hidden` on `body`;
+#     everything else, including touch/pointer handling and typography
+#     scaling, checked out with no changes needed)
+#   - Story 6.2: Animation Performance Pass ✅ (found and fixed one real
+#     issue — `ArtifactGridRow`'s `DragBadge` was driving a React re-render
+#     on every `pointermove`; now writes `transform` straight to a forwarded
+#     ref instead — everything else, including GSAP context cleanup and
+#     `ScrollTrigger.batch()` usage, already matched `docs/gsap-performance.md`)
+#   - Story 6.3: Cross-Browser Compatibility Check ✅ (static audit of every
+#     browser-sensitive API/CSS feature in `src/`; no unguarded risk found —
+#     `navigator.vibrate`, Pointer Events, WebKit-prefixed CSS, and `<audio>`
+#     usage are all already correctly feature-detected or fallback-safe)
+#   - Story 6.4: Code Quality and Architecture Review ✅ (`pnpm lint`/
+#     `ts:check`/`build` all pass clean after removing one unused import;
+#     closed a previously-flagged, already-diagnosed bug — `MediaCarousel`'s
+#     dead `focus-visible` ring, same `outline-0` fix already applied to
+#     `AudioPlayer`; no dead code, unused deps, or hardcoded content found)
+#   - Story 6.5: Update README with Final Information ✅ (added "QA &
+#     Delivery," "Known Issues & Limitations," and "Challenges & Trade-offs"
+#     sections; updated Project Status to reflect Epic 6 completion)
+#   - Story 6.6: Repository Cleanup and Organization ✅ (removed one
+#     orphaned, unreferenced root asset, `Group 4.svg`; verified `.gitignore`
+#     coverage, no committed secrets, `/public` organization, and dependency
+#     usage — all already clean)
+# Remaining (not attempted this pass — see each story's Blocked By):
+#   - Story 6.7: Final Build and Deployment Test (backlog)
+#   - Story 6.8: Create GitHub Repository and Submit (backlog)
+#
+# Overall Project Progress: 32/38 stories complete (84%)
+# Remaining Work: 6 stories (16%) — Epic 5 stretch Stories 5.5-5.8, and
+#   Epic 6 Stories 6.7-6.8
 # Estimated Completion: Epics 1-4 complete (required scope); Epic 5
-#   (Details Page, stretch) in progress with Stories 5.1-5.4 done — Epic 6
-#   (QA & Delivery) is the remaining required scope, not yet started
+#   (Details Page, stretch) in progress with Stories 5.1-5.4 done; Epic 6
+#   (QA & Delivery, required scope) in progress with Stories 6.1-6.6 done —
+#   6.7 (final build/deployment test) and 6.8 (GitHub repo creation/submit)
+#   remain, the latter requiring a human to actually create/own the
+#   repository and submit it

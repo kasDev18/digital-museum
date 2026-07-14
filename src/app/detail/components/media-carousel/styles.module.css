@@ -7,7 +7,13 @@
    `touch-pan-y` (Story 4.1), just via the raw CSS property since this
    component isn't built on that hook. */
 .MediaCarousel {
-  @apply bg-background-elevated focus-visible:outline-foreground relative aspect-[10/7] w-full overflow-hidden rounded-2xl outline-none select-none focus-visible:outline-2 focus-visible:outline-offset-4;
+  /* `outline-0` (zero-width), not `outline-none` — the latter also sets
+     Tailwind's `--tw-outline-style` custom property to `none` on this
+     element, and `focus-visible:outline-2` below only ever reads that
+     same variable rather than resetting it, so the ring never rendered
+     (even once focused) with `outline-none` — same bug and fix as
+     AudioPlayer's seek scrubber (see that component's styles.module.css). */
+  @apply bg-background-elevated focus-visible:outline-foreground relative aspect-[10/7] w-full overflow-hidden rounded-2xl outline-0 select-none focus-visible:outline-2 focus-visible:outline-offset-4;
   touch-action: pan-y;
   /* `contain: paint` keeps this element's own transformed (rotated)
      bounding box from being counted toward an ANCESTOR's scrollable
