@@ -1,0 +1,49 @@
+@reference "tailwindcss";
+@reference '../../../app/globals.css';
+
+.SiteHeader {
+  @apply fixed inset-x-0 top-0 z-20 flex items-center justify-center bg-transparent p-6 sm:px-10;
+  /* Hidden-until-revealed only applies on the landing route (`data-revealed`
+     starts `true` everywhere else, see index.tsx) — opacity and the scroll
+     gradient both ease in via this one `transition`. */
+  opacity: 0;
+  transition:
+    opacity 1.2s ease,
+    background 0.4s ease;
+}
+
+.SiteHeader[data-revealed='true'] {
+  opacity: 1;
+}
+
+/* Gradient scrim behind the wordmark once the page has scrolled, so the
+   fixed header stays legible over whatever content passes beneath it
+   instead of relying on `bg-transparent` alone. */
+.SiteHeader[data-scrolled='true'] {
+  background: linear-gradient(to bottom, var(--background) 0%, transparent 100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .SiteHeader {
+    transition: none;
+  }
+}
+
+.SiteHeader_link {
+  @apply flex items-center gap-2.5;
+}
+
+.SiteHeader_wordmark {
+  @apply h-7 w-auto sm:h-8;
+  /* `fill="currentColor"` follows the inherited `color` from `body`
+     (`--foreground`) — needs its own transition so a theme toggle fades the
+     wordmark instead of snapping it, same reasoning as `body`'s in
+     globals.css. */
+  transition: color 0.4s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .SiteHeader_wordmark {
+    transition: none;
+  }
+}

@@ -1,0 +1,24 @@
+@reference "tailwindcss";
+@reference '../../../../app/globals.css';
+
+.GsapScrollDemo {
+    @apply flex flex-col gap-24 px-8 py-32;
+}
+
+.GsapScrollDemo_title {
+    @apply text-foreground-muted font-serif text-sm;
+}
+
+.GsapScrollDemo_directionCont {
+    @apply flex h-[70vh] items-center justify-center;
+}
+
+.GsapScrollDemo_direction {
+    @apply text-foreground-muted font-serif text-sm;
+}
+
+.GsapScrollDemo_panel {
+    /* will-change is toggled in JS only for the tween's lifetime, not set
+       permanently here — see index.tsx's onStart/onComplete. */
+    @apply bg-background-elevated text-foreground font-display flex h-48 items-center justify-center rounded-xl text-2xl;
+}

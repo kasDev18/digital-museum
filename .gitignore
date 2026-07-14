@@ -10,6 +10,16 @@
 !.yarn/releases
 !.yarn/versions
 
+digital-museum
+
+# bmad
+_bmad
+.agents
+.claude
+AGENTS.md
+CLAUDE.md
+EPICS_AND_STORIES.md
+
 # testing
 /coverage
 

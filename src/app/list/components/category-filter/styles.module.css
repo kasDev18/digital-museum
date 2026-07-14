@@ -1,0 +1,50 @@
+@reference "tailwindcss";
+@reference '../../../../app/globals.css';
+
+/* Fixed, centered chrome just under `SiteHeader` (Story 1.7) — same
+   floating-pill treatment as `ViewSwitcher`'s own fixed bottom toolbar
+   (`list-page-content/styles.module.css`), just anchored to the top of the
+   viewport instead. `ArtifactGridRow_first`/`ArtifactList` reserve top
+   clearance sized to clear both this bar and the header above it. */
+.CategoryFilter {
+  @apply fixed inset-x-0 top-20 z-20 flex justify-center px-4 sm:top-24 sm:px-10;
+}
+
+/* Same gray (`#c7c6c5`, the Figma file's "Separators" color) track as
+   `ViewSwitcher`'s toggle. `overflow-x-auto` + the scrollbar-hiding rules
+   below give the bar horizontal scroll on narrow viewports (Story 4.2's
+   "horizontal scroll on mobile if needed" AC) without a visible scrollbar
+   cutting into the pill's own rounded silhouette. */
+.CategoryFilter_track {
+  @apply flex max-w-full items-center gap-1 overflow-x-auto rounded-full bg-[#c7c6c5] p-1.5 shadow-lg;
+  scrollbar-width: none;
+}
+
+.CategoryFilter_track::-webkit-scrollbar {
+  display: none;
+}
+
+/* `min-h-11` (44px) meets Story 4.5's minimum touch-target size — `py-2`
+   alone (~36px) fell short. `touch-action: manipulation` removes the
+   ~300ms tap delay/double-tap-zoom mobile browsers otherwise apply to
+   plain taps, and `-webkit-tap-highlight-color: transparent` swaps out
+   Safari/Chrome's default gray tap flash for this bar's own intentional
+   hover/selected-pill feedback below. */
+.CategoryFilter_item {
+  @apply text-navy flex min-h-11 shrink-0 items-center justify-center rounded-full px-3.5 py-2 font-serif text-sm font-medium whitespace-nowrap transition-colors duration-200;
+  @apply focus-visible:outline-navy focus-visible:outline-2 focus-visible:outline-offset-2;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.CategoryFilter_item:hover {
+  @apply bg-cream/40;
+}
+
+/* The selected category's own cream pill — same "current state" solid-fill
+   treatment as `ViewSwitcher_indicator`'s circle, just sized to its text
+   instead of a fixed icon box. */
+.CategoryFilter_item_selected,
+.CategoryFilter_item_selected:hover {
+  @apply bg-cream;
+}

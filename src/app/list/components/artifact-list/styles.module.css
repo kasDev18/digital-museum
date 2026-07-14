@@ -1,0 +1,11 @@
+@reference "tailwindcss";
+@reference '../../../globals.css';
+
+/* Top clearance matches `ArtifactGridRow_first`'s own reserved space (both
+   clear the fixed `CategoryFilter` bar, Story 4.2) so toggling
+   `ViewSwitcher` (Story 3.4) between Grid and List doesn't visibly jump
+   the content up/down by that reserved amount. Full-width, no horizontal
+   gutter — the list rows should use the entire viewport width. */
+.ArtifactList {
+  @apply flex w-full list-none flex-col pt-16 lg:pt-20 px-6;
+}

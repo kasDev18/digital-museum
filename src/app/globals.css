@@ -1,26 +1,83 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Figma "Ion Oval Zip Legend" palette (dark theme, default) */
+  --navy-900: #253143;
+  --navy-800: #2f3c52;
+  --cream-100: #efebe5;
+  --cream-200: #cfc9be;
+
+  --background: var(--navy-900);
+  --background-elevated: var(--navy-800);
+  --foreground: var(--cream-100);
+  --foreground-muted: var(--cream-200);
+
+  /* Landing hero CTA fill/text — cream-on-navy on the dark theme, inverted
+     on the light theme below so the button never blends into a
+     same-color page background (see `.LandingHero_cta`). */
+  --cta-background: var(--cream-100);
+  --cta-foreground: var(--navy-900);
+
+  /* Global text-size scale, adjusted by the footer's A+/A- controls (Story 1.7) */
+  --font-scale: 1;
+}
+
+/* Light theme variant, toggled via the header/footer theme switch (Story 1.7) */
+:root.light {
+  --background: var(--cream-100);
+  --background-elevated: #e3ddd0;
+  --foreground: var(--navy-900);
+  --foreground-muted: #4d5a70;
+
+  --cta-background: var(--navy-900);
+  --cta-foreground: var(--cream-100);
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-background-elevated: var(--background-elevated);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-foreground-muted: var(--foreground-muted);
+  --color-navy: var(--navy-900);
+  --color-navy-elevated: var(--navy-800);
+  --color-cream: var(--cream-100);
+  --color-cta: var(--cta-background);
+  --color-cta-foreground: var(--cta-foreground);
+
+  --font-display: var(--font-patua-one);
+  --font-serif: var(--font-playfair-display);
+  --font-sans: var(--font-noto-sans);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  font-size: calc(16px * var(--font-scale));
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-serif), Georgia, serif;
+  /* `ListBackground` (List page) is `position: fixed` and sized wider than
+     the viewport below `lg` (900px/1300px on mobile/tablet) so its
+     1590:1050 arc motif crops the same way at every breakpoint — a fixed
+     element is positioned against the initial containing block (the
+     viewport), so it escapes any ancestor's own `overflow-hidden` and
+     would otherwise add real horizontal scroll on narrow screens. Clipping
+     here, at the document root, is the one place that actually contains a
+     fixed-position descendant regardless of which route renders it. */
+  overflow-x: hidden;
+  /* Smooths the light/dark toggle (`.light` added/removed on `<html>` by
+     `ThemeFontControls`) instead of the page's base background/text color
+     snapping instantly. Individual components with their own themed colors
+     (`SiteHeader`, `SiteFooter`, `LandingHero`, `ListBackground`, ...) carry
+     matching transitions of their own — see each for why. */
+  transition:
+    background-color 0.5s ease,
+    color 0.5s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body {
+    transition: none;
+  }
 }

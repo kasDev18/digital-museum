@@ -1,0 +1,73 @@
+@reference "tailwindcss";
+@reference '../../../app/globals.css';
+
+.SiteFooter {
+  @apply bg-background/90 fixed inset-x-0 bottom-0 z-20 flex flex-col gap-3 p-4 min-[23.438rem]:flex-row min-[23.438rem]:items-center min-[23.438rem]:justify-between sm:gap-4 sm:px-10;
+  /* Hidden-until-revealed only applies on the landing route (`data-revealed`
+     starts `true` everywhere else, see index.tsx). `background-color` here
+     (not just `opacity`) so `bg-background/90` also eases across a
+     light/dark toggle instead of snapping. */
+  opacity: 0;
+  transition:
+    opacity 1.2s ease,
+    background-color 0.4s ease;
+}
+
+.SiteFooter[data-revealed='true'] {
+  opacity: 1;
+}
+
+/* Top border draws in from each edge toward the center rather than
+   existing as one static line — each span starts at 0 width anchored to
+   its own edge and grows to meet its counterpart at the midpoint. */
+.SiteFooter_borderLeft,
+.SiteFooter_borderRight {
+  @apply absolute top-0 h-px bg-[#6D6E7D];
+  width: 0%;
+  transition: width 1.6s ease;
+}
+
+.SiteFooter_borderLeft {
+  left: 0;
+}
+
+.SiteFooter_borderRight {
+  right: 0;
+}
+
+.SiteFooter[data-revealed='true'] .SiteFooter_borderLeft,
+.SiteFooter[data-revealed='true'] .SiteFooter_borderRight {
+  width: 50%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .SiteFooter,
+  .SiteFooter_borderLeft,
+  .SiteFooter_borderRight,
+  .SiteFooter_copyright {
+    transition: none;
+  }
+}
+
+.SiteFooter_copyright {
+  @apply text-foreground;
+  /* `CopyrightMark`'s `fill="currentColor"` follows this inherited `color` —
+     same reasoning as `SiteHeader_wordmark`'s matching transition. */
+  transition: color 0.4s ease;
+}
+
+.SiteFooter_copyrightIcon {
+  @apply h-4 w-auto;
+}
+
+.SiteFooter_links {
+  @apply flex items-center gap-3 sm:gap-5;
+}
+
+.SiteFooter_link {
+  @apply text-foreground-muted hover:text-foreground transition-colors;
+}
+
+.SiteFooter_linkIcon {
+  @apply h-5 w-5;
+}

@@ -1,0 +1,137 @@
+@reference "tailwindcss";
+@reference '../../../../app/globals.css';
+
+/* `touch-action: pan-y` lets vertical page scroll pass through natively
+   while a horizontal swipe is read by the touch handlers instead of the
+   browser's own touch-scroll gesture — same reasoning as ArtifactGridRow's
+   `touch-pan-y` (Story 4.1), just via the raw CSS property since this
+   component isn't built on that hook. */
+.MediaCarousel {
+  /* `outline-0` (zero-width), not `outline-none` — the latter also sets
+     Tailwind's `--tw-outline-style` custom property to `none` on this
+     element, and `focus-visible:outline-2` below only ever reads that
+     same variable rather than resetting it, so the ring never rendered
+     (even once focused) with `outline-none` — same bug and fix as
+     AudioPlayer's seek scrubber (see that component's styles.module.css). */
+  @apply bg-background-elevated focus-visible:outline-foreground relative aspect-[10/7] w-full overflow-hidden rounded-2xl outline-0 select-none focus-visible:outline-2 focus-visible:outline-offset-4;
+  touch-action: pan-y;
+  /* `contain: paint` keeps this element's own transformed (rotated)
+     bounding box from being counted toward an ANCESTOR's scrollable
+     overflow — without it, the flip below could momentarily balloon the
+     page's scroll height, since a 3D-transformed box's projected bounds
+     do contribute to ancestor scrollable overflow per spec unless
+     contained. `overflow-hidden` above only clips this element's own
+     children, not its own contribution to its parent's scroll region. */
+  contain: paint;
+}
+
+/* Flips-while-fading in on every fresh mount (a "Next story"/"All Objects"
+   navigation fully remounts this component, see index.tsx's own doc
+   comment) — `both` holds the settled end state, matching the
+   `DetailToolbar_borderDraw` convention this mirrors. `.MediaCarousel_exiting`
+   (set via the `isExiting` prop, driven by `DetailPageContent`) swaps to
+   the reverse flip-out just ahead of navigating away. Rotates to/from
+   80deg, not a full 90 — exactly edge-on is the degenerate angle where
+   some browsers compute a wildly inflated transformed bounding box (the
+   `contain: paint` above is the real fix for that, this is just cheap
+   insurance), and the difference is invisible anyway since opacity has
+   already faded to near-0 well before either extreme. */
+@media (prefers-reduced-motion: no-preference) {
+  .MediaCarousel {
+    animation: MediaCarousel_flipIn 0.9s ease-out both;
+  }
+
+  .MediaCarousel_exiting {
+    animation: MediaCarousel_flipOut 0.7s ease-in both;
+  }
+}
+
+@keyframes MediaCarousel_flipIn {
+  from {
+    opacity: 0;
+    transform: perspective(1200px) rotateY(-80deg);
+  }
+  to {
+    opacity: 1;
+    transform: perspective(1200px) rotateY(0deg);
+  }
+}
+
+@keyframes MediaCarousel_flipOut {
+  from {
+    opacity: 1;
+    transform: perspective(1200px) rotateY(0deg);
+  }
+  to {
+    opacity: 0;
+    transform: perspective(1200px) rotateY(80deg);
+  }
+}
+
+.MediaCarousel_track {
+  @apply flex h-full w-full;
+  transition: transform 0.4s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .MediaCarousel_track {
+    transition: none;
+  }
+}
+
+.MediaCarousel_slide {
+  @apply relative h-full w-full shrink-0;
+}
+
+.MediaCarousel_image {
+  @apply h-full w-full object-cover;
+  transition: transform 0.2s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .MediaCarousel_image {
+    transition: none;
+  }
+}
+
+/* Story 5.4's zoom in/out overlay — top-right, since bottom-left/bottom-right
+   are already the dots/"More Images" controls above. Fixed cream-on-photo
+   treatment (not the theme's `--background`/`--foreground` tokens) per the
+   Mshatta Façade detail mock — a light `bg-cream`/`text-navy` pill, same
+   as "More Images" below, not the dark-on-white overlay this project uses
+   elsewhere (e.g. the List page's own dark scrim controls); it sits on
+   top of unpredictable photo content, so it stays legible the same way in
+   both the light and dark site themes regardless. */
+.MediaCarousel_zoom {
+  @apply absolute top-4 right-4 flex items-center gap-1.5;
+}
+
+.MediaCarousel_zoomButton {
+  @apply bg-cream text-navy flex h-9 w-9 items-center justify-center rounded-full shadow-md transition-transform hover:scale-[1.08] active:scale-[0.95] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:scale-100 disabled:active:scale-100;
+}
+
+.MediaCarousel_zoomIcon {
+  @apply h-4 w-4;
+}
+
+/* Same fixed cream-on-photo treatment as the zoom overlay above — see
+   its own comment. */
+.MediaCarousel_more {
+  @apply bg-cream text-navy absolute right-4 bottom-4 flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium shadow-md transition-transform hover:scale-[1.03] active:scale-[0.97];
+}
+
+.MediaCarousel_moreIcon {
+  @apply h-4 w-4;
+}
+
+.MediaCarousel_dots {
+  @apply absolute bottom-4 left-4 flex items-center gap-2;
+}
+
+.MediaCarousel_dot {
+  @apply h-2 w-2 rounded-full bg-white/40 transition-colors;
+}
+
+.MediaCarousel_dotActive {
+  @apply bg-white;
+}

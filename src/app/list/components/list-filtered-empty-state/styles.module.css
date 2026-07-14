@@ -1,0 +1,23 @@
+@reference "tailwindcss";
+@reference '../../../globals.css';
+
+.ListFilteredEmptyState {
+  @apply flex min-h-[40vh] w-full flex-col items-center justify-center gap-3 px-6 text-center;
+}
+
+.ListFilteredEmptyState_message {
+  @apply text-foreground font-serif text-base sm:text-lg;
+}
+
+.ListFilteredEmptyState_hint {
+  @apply text-foreground-muted font-serif text-sm sm:text-base;
+}
+
+/* Same theme-aware CTA fill as `LandingHero_cta` (cream-on-navy / navy-on-cream
+   depending on theme) — `h-11` (44px) doubles as this button's own touch
+   target sizing, matching Story 4.5's minimum-touch-target requirement. */
+.ListFilteredEmptyState_action {
+  @apply bg-cta text-cta-foreground hover:bg-cta/90 focus-visible:outline-cta-foreground font-display mt-1 inline-flex h-11 items-center justify-center rounded-full px-8 text-sm font-normal transition hover:scale-[1.04] focus-visible:outline-2 focus-visible:outline-offset-4 active:scale-[0.97];
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}

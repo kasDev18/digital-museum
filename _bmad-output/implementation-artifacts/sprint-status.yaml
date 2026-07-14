@@ -1,0 +1,274 @@
+# generated: 2026-07-11
+# last_updated: 2026-07-14 (Stories 6.1-6.6 implemented — cross-breakpoint responsive QA, animation performance pass, cross-browser compatibility check, code quality & architecture review, README final-info update, repository cleanup — closing out Epic 6's required scope on top of Stories 5.1-5.4)
+# project: digital-museum
+# project_key: NOKEY
+# tracking_system: file-system
+# story_location: _bmad-output/implementation-artifacts
+# scope: Digital Museum Website Technical Assessment (6 epics, 38 stories: 30 required + 8 stretch)
+# source: EPICS_AND_STORIES.md (repo root)
+# readiness: IN PROGRESS - Epics 1-4 + 6 required scope substantially complete (6.7/6.8 remain); Epic 5 stretch scope partially complete (5.1-5.4 done, 5.5-5.8 remain)
+# architectural_decision: Next.js (App Router) + Tailwind CSS + GSAP for animations, no backend/CMS required, mock data-driven content
+# NOTE: This is a technical assessment project with a 4-day deadline (July 15, 2026). Required scope = Epics 1-4 + 6 (Landing Page + List Page + QA). Epic 5 (Details Page) is stretch scope only if time permits.
+# CURRENT STATUS: Epic 1 complete (all 7 stories done). Epic 2 complete - all 5 stories (2.1-2.5) done. Epic 3 complete - all 5 stories (3.1-3.5) done. Epic 4 complete - all 5 stories (4.1-4.5) done. Epic 5 (stretch) in progress - Stories 5.1-5.4 done (Detail page layout, media carousel, audio controls, zoom controls); 5.5-5.8 remain ready-for-dev. Epic 6 (QA & Delivery) — required scope — Stories 6.1-6.6 done (6.7 final build/deployment test and 6.8 GitHub submission remain backlog, outside this pass's scope).
+
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+#   - cancelled: Epic closed (premise invalidated)
+#
+# Epic Status Transitions:
+#   - backlog → in-progress: Automatically when first story is created
+#   - in-progress → done: Manually when all stories reach 'done' status
+#
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - ready-for-dev: Story file created in stories folder
+#   - in-progress: Developer actively working on implementation
+#   - review: Ready for code review
+#   - done: Story completed
+#   - cancelled: Story closed before any code lands (premise invalidated)
+#
+# WORKFLOW NOTES:
+# ===============
+# - Epic transitions to 'in-progress' automatically when first story is created
+# - Stories can be worked in parallel if team capacity allows
+# - Priority: Complete Epics 1-4 + 6 first (required scope for deadline)
+# - Epic 5 (Details Page) is stretch scope - only attempt if time permits after required scope is complete
+# - Deadline: July 15, 2026 (4 days from project start)
+
+generated: 2026-07-11
+last_updated: 2026-07-12
+project: digital-museum
+project_key: NOKEY
+tracking_system: file-system
+story_location: '_bmad-output/implementation-artifacts'
+
+development_status:
+  # ─────────────────────────────────────────────────────────────────────────
+  # Epic 1: Project Setup
+  # Stories: 7 │ Priority: High │ Required Scope
+  # Foundation: Next.js App Router, Tailwind CSS, GSAP, project structure, mock data, shared chrome
+  # ─────────────────────────────────────────────────────────────────────────
+  epic-1: done
+  1-1-initialize-nextjs-project-with-app-router: done
+  1-2-configure-tailwind-css: done
+  1-3-install-and-configure-gsap: done
+  1-4-establish-project-folder-structure: done
+  1-5-create-mock-data-layer: done
+  1-6-create-readme-skeleton: done
+  1-7-build-shared-header-footer-chrome: done
+  epic-1-retrospective: optional
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Epic 2: Landing Page
+  # Stories: 5 │ Priority: High │ Required Scope
+  # Hero section with GSAP animations, responsive design, CTA navigation
+  # ─────────────────────────────────────────────────────────────────────────
+  epic-2: done
+  2-1-build-landing-page-static-layout: done
+  2-2-implement-background-disc-animation: done
+  2-3-add-scroll-based-content-animations: done
+  2-4-wire-cta-navigation-to-list-page: done
+  2-5-responsive-polish-for-landing-page: done
+  epic-2-retrospective: optional
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Epic 3: List Page Foundation
+  # Stories: 5 │ Priority: High │ Required Scope
+  # Dual view modes (Grid/List), data-driven components, view switcher
+  # ─────────────────────────────────────────────────────────────────────────
+  epic-3: done
+  3-1-create-artifact-thumbnail-component: done
+  3-2-build-grid-view-layout: done
+  3-3-build-list-view-layout: done
+  3-4-implement-view-switcher-toggle: done
+  3-5-wire-thumbnail-navigation-to-detail-page: done
+  epic-3-retrospective: optional
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Epic 4: List Page Interaction
+  # Stories: 5 │ Priority: High │ Required Scope
+  # Drag/pan canvas, touch support, category filtering, state management
+  # ─────────────────────────────────────────────────────────────────────────
+  epic-4: done
+  4-1-implement-drag-pan-canvas-for-grid-view: done
+  4-2-add-category-filter-bar: done
+  4-3-implement-empty-state-handling: done
+  4-4-preserve-state-across-view-mode-switching: done
+  4-5-touch-support-optimization-for-mobile: done
+  epic-4-retrospective: optional
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Epic 5: Details Page (Stretch/Optional)
+  # Stories: 8 │ Priority: Low (Stretch) │ Optional Scope
+  # Media "More Images" stepper, audio player/zoom/download/comment/migration-journey controls
+  # ONLY ATTEMPT IF TIME PERMITS after Epics 1-4 + 6 are complete
+  # ─────────────────────────────────────────────────────────────────────────
+  epic-5: in-progress
+  5-1-build-detail-page-layout: done
+  5-2-implement-media-carousel: done
+  5-3-add-audio-controls: done
+  5-4-add-zoom-controls: done
+  5-5-add-download-pdf-action: ready-for-dev
+  5-6-add-comment-affordance: ready-for-dev
+  5-7-add-migration-journey-widget: ready-for-dev
+  5-8-responsive-polish-for-detail-page: ready-for-dev
+  epic-5-retrospective: optional
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Epic 6: QA & Delivery
+  # Stories: 8 │ Priority: High │ Required Scope
+  # Cross-breakpoint testing, animation performance, code quality, submission
+  # ─────────────────────────────────────────────────────────────────────────
+  epic-6: done
+  6-1-cross-breakpoint-responsive-qa: done
+  6-2-animation-performance-pass: done
+  6-3-cross-browser-compatibility-check: done
+  6-4-code-quality-and-architecture-review: done
+  6-5-update-readme-with-final-information: done
+  6-6-repository-cleanup-and-organization: done
+  # 6-7-final-build-and-deployment-test: backlog
+  # 6-8-create-github-repository-and-submit: backlog
+  epic-6-retrospective: optional
+
+# ─────────────────────────────────────────────────────────────────────────
+# IMPLEMENTATION PROGRESS SUMMARY
+# ─────────────────────────────────────────────────────────────────────────
+# Epic 1 Progress: 7/7 stories complete (100%) — DONE
+# Completed Stories:
+#   - Story 1.1: Initialize Next.js Project with App Router ✅
+#   - Story 1.2: Configure Tailwind CSS ✅
+#   - Story 1.3: Install and Configure GSAP ✅
+#   - Story 1.4: Establish Project Folder Structure ✅
+#   - Story 1.5: Create Mock Data Layer ✅
+#   - Story 1.6: Create README Skeleton ✅
+#   - Story 1.7: Build Shared Header & Footer Chrome ✅
+#
+# Epic 2 Progress: 5/5 stories complete (100%) — DONE
+# Completed Stories:
+#   - Story 2.1: Build Landing Page Static Layout ✅
+#   - Story 2.2: Implement Background Disc Animation ✅
+#   - Story 2.3: Add Scroll-Based Content Animations ✅
+#   - Story 2.4: Wire CTA Navigation to List Page ✅ (CTA links to /list; that
+#     route has no page yet — Epic 3 scope, see deferred-work.md)
+#   - Story 2.5: Responsive Polish for Landing Page ✅
+#
+# Epic 3 Progress: 5/5 stories complete (100%) — DONE
+# Completed Stories:
+#   - Story 3.1: Create Artifact Thumbnail Component ✅
+#   - Story 3.2: Build Grid View Layout ✅
+#   - Story 3.3: Build List View Layout ✅ (wired into the route by Story 3.4)
+#   - Story 3.4: Implement View Switcher Toggle ✅ (ViewSwitcher pill +
+#     ListPageContent client-state wrapper; switches Grid/List with a
+#     crossfade transition)
+#   - Story 3.5: Wire Thumbnail Navigation to Detail Page ✅ (built
+#     `/detail/[id]` placeholder page + site-chrome `not-found.tsx`)
+#
+# Epic 4 Progress: 5/5 stories complete (100%) — DONE
+# Completed Stories:
+#   - Story 4.1: Implement Drag/Pan Canvas for Grid View ✅ (mouse/touch pan via
+#     `useDragPan`'s pointer events was already in place; a later addendum
+#     (2026-07-13) replaced its original rubber-band-with-a-cap bounds with
+#     genuinely infinite dragging — `ArtifactGridRow` tiles 7 copies of its
+#     artifacts and the hook wraps the offset seamlessly through them,
+#     verified gap-free up to 5120px viewport widths — and added the
+#     cursor-following `DragBadge` affordance the master spec's own
+#     `drag icon.png` asset called for but the original pass had missed)
+#   - Story 4.2: Add Category Filter Bar ✅ (new `CategoryFilter` component;
+#     filter state lives in `ListPageContent` alongside `ViewMode`, so it
+#     persists across Grid⇄List toggles for free; the active view now
+#     remounts on a category change too, which resets each row's drag-pan
+#     state and replays the entrance reveal for the newly-filtered cards)
+#   - Story 4.3: Implement Empty State Handling ✅ (new `ListFilteredEmptyState`
+#     component, rendered by `ListPageContent` in place of whichever view is
+#     active once the category filter narrows the dataset to zero artifacts;
+#     names the active category, suggests a different one, and its "View all
+#     objects" action resets the filter — distinct from `ArtifactGrid`/
+#     `ArtifactList`'s own pre-existing `ListEmptyState`, which still covers
+#     the unrelated "underlying artifact array is empty" case)
+#   - Story 4.4: Preserve State Across View Mode Switching ✅ (`viewMode`/
+#     `category` now also persist to `sessionStorage`, so a full unmount —
+#     e.g. navigating to a Detail page and back — restores the same view/
+#     filter instead of reverting to the Grid/All-Objects default; the
+#     Grid⇄List toggle now resets page scroll to the top on the explicit
+#     `ViewSwitcher` click, so the transition reads as predictable rather
+#     than leaving the visitor at an arbitrary scroll position)
+#   - Story 4.5: Touch Support Optimization for Mobile ✅ (`CategoryFilter`'s
+#     pill buttons bumped to a 44px minimum touch target; `touch-action:
+#     manipulation` + a transparent tap-highlight on the filter bar and
+#     `ViewSwitcher` for snappier, flash-free taps; `ArtifactGridRow` now
+#     dims slightly while dragging — visible feedback that works for touch,
+#     not just the mouse-only grab/grabbing cursor — plus a short
+#     feature-detected `navigator.vibrate` haptic tick on drag engage; the
+#     underlying pointer-events drag/pan and `touch-pan-y` gesture isolation
+#     were already in place from Story 4.1)
+#
+# Epic 5 Progress: 4/8 stories complete (50%) — IN PROGRESS (stretch scope)
+# Completed Stories:
+#   - Story 5.1: Build Detail Page Layout ✅ (`DetailPageContent` supersedes
+#     Story 3.5's `DetailPlaceholder` stopgap; `DetailToolbar`'s "All
+#     Objects"/"Next story" top bar, two-column desktop layout stacking to
+#     media-above-text on mobile, and a minimal-but-working `AudioPlayer`
+#     slot standing in for Story 5.3's own fuller scope)
+#   - Story 5.2: Implement Media Carousel ✅ (`MediaCarousel` — "More
+#     Images" button, clickable dot indicators, arrow-key and swipe
+#     navigation, all wrapping at both ends; hides its own controls
+#     entirely for single-item media)
+#   - Story 5.3: Add Audio Controls ✅ (`AudioPlayer` gains a decorative
+#     tick-mark waveform scrubber layered behind its existing native range
+#     input — visuals only, seeking/dragging/keyboard behavior unchanged —
+#     plus a new mute/unmute toggle (`SoundOnIcon`/`SoundOffIcon`); both
+#     disable together with the rest of the player for `audioUrl: null`
+#     artifacts)
+#   - Story 5.4: Add Zoom Controls ✅ (`MediaCarousel` gains a top-right
+#     zoom in/out overlay — CSS `transform: scale` on the active slide
+#     only, 0.5x-3x range in 0.5x steps, buttons natively disable at each
+#     boundary, resets to 1x on every slide change via all four existing
+#     navigation paths; renders even for single-image artifacts, unlike
+#     the "More Images"/dots controls)
+#
+# Epic 6 Progress: 6/8 stories complete (75%) — IN PROGRESS (required scope)
+# Completed Stories:
+#   - Story 6.1: Cross-Breakpoint Responsive QA ✅ (static code audit across
+#     Landing/List/Detail; found and fixed one real horizontal-scroll bug —
+#     `ListBackground`'s `position: fixed` sizing escaped its ancestor's
+#     overflow-hidden below `lg` — via `overflow-x: hidden` on `body`;
+#     everything else, including touch/pointer handling and typography
+#     scaling, checked out with no changes needed)
+#   - Story 6.2: Animation Performance Pass ✅ (found and fixed one real
+#     issue — `ArtifactGridRow`'s `DragBadge` was driving a React re-render
+#     on every `pointermove`; now writes `transform` straight to a forwarded
+#     ref instead — everything else, including GSAP context cleanup and
+#     `ScrollTrigger.batch()` usage, already matched `docs/gsap-performance.md`)
+#   - Story 6.3: Cross-Browser Compatibility Check ✅ (static audit of every
+#     browser-sensitive API/CSS feature in `src/`; no unguarded risk found —
+#     `navigator.vibrate`, Pointer Events, WebKit-prefixed CSS, and `<audio>`
+#     usage are all already correctly feature-detected or fallback-safe)
+#   - Story 6.4: Code Quality and Architecture Review ✅ (`pnpm lint`/
+#     `ts:check`/`build` all pass clean after removing one unused import;
+#     closed a previously-flagged, already-diagnosed bug — `MediaCarousel`'s
+#     dead `focus-visible` ring, same `outline-0` fix already applied to
+#     `AudioPlayer`; no dead code, unused deps, or hardcoded content found)
+#   - Story 6.5: Update README with Final Information ✅ (added "QA &
+#     Delivery," "Known Issues & Limitations," and "Challenges & Trade-offs"
+#     sections; updated Project Status to reflect Epic 6 completion)
+#   - Story 6.6: Repository Cleanup and Organization ✅ (removed one
+#     orphaned, unreferenced root asset, `Group 4.svg`; verified `.gitignore`
+#     coverage, no committed secrets, `/public` organization, and dependency
+#     usage — all already clean)
+# Remaining (not attempted this pass — see each story's Blocked By):
+#   - Story 6.7: Final Build and Deployment Test (backlog)
+#   - Story 6.8: Create GitHub Repository and Submit (backlog)
+#
+# Overall Project Progress: 32/38 stories complete (84%)
+# Remaining Work: 6 stories (16%) — Epic 5 stretch Stories 5.5-5.8, and
+#   Epic 6 Stories 6.7-6.8
+# Estimated Completion: Epics 1-4 complete (required scope); Epic 5
+#   (Details Page, stretch) in progress with Stories 5.1-5.4 done; Epic 6
+#   (QA & Delivery, required scope) in progress with Stories 6.1-6.6 done —
+#   6.7 (final build/deployment test) and 6.8 (GitHub repo creation/submit)
+#   remain, the latter requiring a human to actually create/own the
+#   repository and submit it

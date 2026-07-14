@@ -1,0 +1,102 @@
+@reference "tailwindcss";
+@reference '../../../globals.css';
+
+.LandingHero {
+  @apply relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 py-16 text-center sm:py-20;
+  /* Starts pure black regardless of theme, then fades to the real
+     `--background` (see `body` in globals.css, painted underneath this
+     section) the moment `LandingHeroContentReveal` dispatches the reveal
+     event — see the `useGSAP` in `index.tsx` that animates this to
+     `transparent`. */
+  background-color: #000;
+}
+
+.LandingHero_content {
+  /* Figma "intro TXT layout": column, centered, 30px gap between the title
+     block and the CTA. */
+  @apply relative z-10 flex max-w-xl flex-col items-center gap-[30px];
+}
+
+/* Soft scrim behind the text stack so it stays legible over the disc's
+   busy pattern rings at every breakpoint, without hiding the artwork
+   elsewhere on the disc. Sized off the content box itself (not a fixed
+   breakpoint value) so it always matches however tall the 3-line headline
+   + subtext + CTA stack renders. */
+.LandingHero_content::before {
+  content: '';
+  @apply absolute -inset-x-8 -inset-y-6 -z-10 rounded-[100%];
+  background: radial-gradient(closest-side, var(--background) 55%, transparent 100%);
+}
+
+.LandingHero_titleBlock {
+  /* Figma "title layout": column, 25px gap between headline and subtext,
+     384px reference width (matches the exact desktop wrap: "Objects, Voices"
+     / "and Global" / "Journeys" and the 2-line subtext). */
+  @apply flex w-full max-w-[384px] flex-col items-center gap-[25px];
+}
+
+/* All three rules below use rem, not raw px, for every arbitrary
+   font-size/line-height value (including at the lg breakpoint, which used
+   to hardcode px) — rem keeps them scaling with the footer's A+/A-
+   font-size control (`--font-scale` on `html`, Story 1.7) at every
+   breakpoint, matching Figma's px specs exactly at the default 16px root. */
+
+.LandingHero_headline {
+  /* font-family/line-height ratio (62/57) per Figma; font-size steps up
+     monotonically to the exact 57px (3.5625rem) spec value at the lg
+     breakpoint (the desktop primary-fidelity target). Each manually-broken
+     line gets `whitespace-nowrap` because "Objects, Voices" measures a few
+     px wider than the 384px title block in Chromium's Playfair Display
+     metrics (Figma's own renderer fits it) — without it, that line wraps
+     again and turns 3 lines into 4. */
+  @apply text-foreground font-serif text-[1.75rem] leading-[1.088] whitespace-nowrap sm:text-4xl md:text-[2.875rem] lg:text-[3.5625rem];
+  /* Concrete starting value (not `none`) so the entrance/exit tweens in
+     `LandingHeroContentReveal`/`index.tsx` have a real blur length to
+     interpolate to/from. */
+  filter: blur(0px);
+  /* Only `color`, not `filter` — GSAP drives the blur itself via inline
+     styles set every frame, and a CSS transition on the same property would
+     fight it. `color` is untouched by GSAP here, so it's safe to smooth a
+     light/dark toggle. */
+  transition: color 0.4s ease;
+}
+
+.LandingHero_subtext {
+  /* font-size/line-height (17px/28px = 1.0625rem/28px) per Figma at the lg
+     breakpoint; smaller steps below it scale down monotonically (this used
+     to peak at sm/md and shrink again at lg, which was backwards). */
+  @apply text-foreground font-serif text-sm leading-[1.647] sm:text-base lg:text-[1.0625rem];
+  /* See `.LandingHero_headline`'s matching comments (blur + color). */
+  filter: blur(0px);
+  transition: color 0.4s ease;
+}
+
+.LandingHero_cta {
+  /* Figma CTA: 0px/40px padding, hug-content width, 50px height, cream fill,
+     Patua One 15px/18px (0.9375rem/1.125rem) regular weight, dark navy
+     text — on the dark theme. `bg-cta`/`text-cta-foreground` (globals.css)
+     invert those two on the light theme instead of hardcoding cream/navy:
+     light theme's page background IS cream-100, so a literal cream-filled
+     button used to sit flush against a cream page with no contrast at all.
+     Focus-visible outline follows the same pattern as `ArtifactThumbnail`
+     (Story 3.1), colored to contrast against this button's own fill rather
+     than the page background behind it. Hover/active use a CSS transform
+     (scale), not GSAP, matching this
+     codebase's convention of plain CSS transitions for simple hover
+     micro-interactions (see `ArtifactThumbnail_grid:hover` scaling its
+     image) — GSAP is reserved for the entrance/exit sequences in
+     `LandingHeroContentReveal`/`LandingHero`. `transition` (not just
+     `transition-colors`) is required so the `scale` transform eases too;
+     this only works because the entrance reveal's tween clears its own
+     inline `transform`/`opacity` once done (see `clearProps` in
+     `landing-hero-content-reveal/index.tsx`) — otherwise that inline style
+     would permanently override this rule regardless of specificity. */
+  @apply bg-cta text-cta-foreground hover:bg-cta/90 focus-visible:outline-cta-foreground font-display inline-flex h-[50px] items-center justify-center rounded-full px-10 text-[0.9375rem] leading-[1.125rem] font-normal transition hover:scale-[1.04] focus-visible:outline-2 focus-visible:outline-offset-4 active:scale-[0.97];
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .LandingHero_headline,
+  .LandingHero_subtext {
+    transition: none;
+  }
+}

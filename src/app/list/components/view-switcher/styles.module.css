@@ -1,0 +1,84 @@
+@reference "tailwindcss";
+@reference '../../../../app/globals.css';
+
+/* Gray "track" (`#C7C6C5`, the Figma file's own "Separators" color — not
+   otherwise in this project's palette, so used as a one-off literal here,
+   same precedent as `SiteFooter`'s `border-t-[#6D6E7D]`) + a floating
+   fixed/centered position — see `list-page-content/styles.module.css` —
+   so it needs a fill that reads clearly regardless of what's behind it,
+   independent of either theme's `background`/`background-elevated`. */
+/* Already >=44px (Story 4.5's minimum touch target: the `h-10` indicator
+   circle plus `p-1.5` padding clears it) — `touch-action: manipulation` +
+   a transparent tap-highlight are the same mobile-tap polish applied to
+   `CategoryFilter_item` below it, for the same reason. */
+.ViewSwitcher {
+  @apply focus-visible:outline-navy flex items-center gap-[7px] rounded-full bg-[#c7c6c5] p-1.5 shadow-lg transition-all duration-300 ease-out focus-visible:outline-2 focus-visible:outline-offset-4;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ViewSwitcher:hover {
+  @apply scale-[1.02] bg-[#c7c6c5]/80;
+}
+
+/* Tactile press feedback on click, matching `LandingHero_cta`'s own
+   hover/active scale convention. */
+.ViewSwitcher:active {
+  @apply scale-[0.96];
+}
+
+/* The current mode's icon, in its own solid cream circle — the toggle's
+   only "current state" indicator (the target segment below is a
+   describe-the-next-action label, not a stable current-state readout). */
+.ViewSwitcher_indicator {
+  @apply bg-cream flex h-10 w-10 shrink-0 items-center justify-center rounded-full;
+}
+
+/* The target mode's icon + its "Switch to {target}" label, sitting
+   directly on the gray track (no circle of its own) — 14px/19px Playfair
+   Display medium per the Figma spec; `font-serif` is explicit here rather
+   than relying on inherited `<body>` styling, matching this codebase's
+   convention of declaring font-family per component (e.g.
+   `ArtifactThumbnail_title`, `LandingHero_headline`). */
+.ViewSwitcher_action {
+  @apply text-navy flex items-center gap-[5px] px-2.5 font-serif text-sm leading-[1.1875rem] font-medium;
+}
+
+.ViewSwitcher_icon {
+  @apply text-navy h-5 w-5 shrink-0;
+}
+
+/* Pop-in for whichever icon/label just swapped in on click. Needs no
+   explicit trigger — the indicator's icon remounts on every toggle (the
+   icon *component* itself changes, see `index.tsx`), and
+   `.ViewSwitcher_action` is explicitly `key`ed to remount for the same
+   reason — so this `animation` (not a `transition`, which can't animate a
+   brand-new element's own entrance) just replays automatically. Only the
+   *indicator's* icon gets its own animation, scoped via this descendant
+   selector — the action segment's icon+label animate together as one
+   unit via `.ViewSwitcher_action`'s own animation below, so animating
+   this icon a second time inside it would just be redundant (its opacity
+   would be masked by the still-fading-in parent anyway). The action
+   segment's animation is staggered 60ms behind the indicator's so the
+   swap reads as "current mode updates, then the next-action label
+   catches up" rather than everything popping in at once. */
+@media (prefers-reduced-motion: no-preference) {
+  .ViewSwitcher_indicator .ViewSwitcher_icon {
+    animation: ViewSwitcher_pop 0.28s ease-out both;
+  }
+
+  .ViewSwitcher_action {
+    animation: ViewSwitcher_pop 0.28s 0.06s ease-out both;
+  }
+}
+
+@keyframes ViewSwitcher_pop {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

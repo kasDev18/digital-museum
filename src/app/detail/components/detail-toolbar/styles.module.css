@@ -1,0 +1,159 @@
+@reference "tailwindcss";
+@reference '../../../../app/globals.css';
+
+/* Rectangular bordered bar (not a pill) per the detail mock — sharp
+   corners, the same width as the two-column layout below it (see
+   `DetailPageContent`, which has no `max-w-*` cap either). `items-stretch`
+   (not `items-center`) + `overflow-hidden` so `DetailToolbar_next` below
+   can fill the bar's full height flush against its right edge, per the
+   mock. Padding lives on each child individually now (not here), since
+   the two children need different vertical treatment — "All Objects" is
+   inset text, "Next story" fills the full height.
+
+   Left/right edges stay a plain static `border-x` — only the top/bottom
+   lines get the "draws in from each edge" treatment below, since a 1px
+   vertical edge has no meaningful midpoint to grow toward. */
+.DetailToolbar {
+  @apply border-foreground-muted/30 relative mx-auto flex w-full items-stretch justify-between overflow-hidden border-x;
+}
+
+/* Top/bottom border: each half starts at 0 width anchored to its own
+   edge and grows to 50%, meeting its counterpart at the midpoint — same
+   technique as `SiteFooter_borderLeft`/`_borderRight`, generalized to
+   both the top and bottom line of this bordered box. Base width is the
+   settled 50% so reduced-motion users see the full border immediately;
+   the media query below is what makes it grow from 0 on mount. */
+.DetailToolbar_borderTopLeft,
+.DetailToolbar_borderTopRight,
+.DetailToolbar_borderBottomLeft,
+.DetailToolbar_borderBottomRight {
+  @apply bg-foreground-muted/30 absolute h-px;
+  width: 50%;
+}
+
+.DetailToolbar_borderTopLeft,
+.DetailToolbar_borderTopRight {
+  top: 0;
+}
+
+.DetailToolbar_borderBottomLeft,
+.DetailToolbar_borderBottomRight {
+  bottom: 0;
+}
+
+.DetailToolbar_borderTopLeft,
+.DetailToolbar_borderBottomLeft {
+  left: 0;
+}
+
+.DetailToolbar_borderTopRight,
+.DetailToolbar_borderBottomRight {
+  right: 0;
+}
+
+/* `:not([data-skip-entrance='true'])` — set on the "Next story" hop
+   (see index.tsx) so this specific bar mount renders already-settled
+   instead of replaying the reveal. A visit that genuinely arrives at
+   the Detail page (from `/list`, a direct URL, browser back/forward)
+   never has the attribute, so it plays normally. */
+@media (prefers-reduced-motion: no-preference) {
+  .DetailToolbar:not([data-skip-entrance='true']) .DetailToolbar_borderTopLeft,
+  .DetailToolbar:not([data-skip-entrance='true']) .DetailToolbar_borderTopRight,
+  .DetailToolbar:not([data-skip-entrance='true']) .DetailToolbar_borderBottomLeft,
+  .DetailToolbar:not([data-skip-entrance='true']) .DetailToolbar_borderBottomRight {
+    animation: DetailToolbar_borderDraw 0.6s ease-out both;
+  }
+
+  /* Links fade in only once the border has met at the center — delayed
+     past the 0.6s draw, with `_next` catching up ~80ms behind `_link`
+     (same stagger idea as `ViewSwitcher_action`'s own delayed pop-in). */
+  .DetailToolbar:not([data-skip-entrance='true']) .DetailToolbar_link {
+    animation: DetailToolbar_fadeIn 0.35s 0.6s ease-out both;
+  }
+
+  .DetailToolbar:not([data-skip-entrance='true']) .DetailToolbar_next {
+    animation: DetailToolbar_fadeIn 0.35s 0.68s ease-out both;
+  }
+}
+
+@keyframes DetailToolbar_borderDraw {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 50%;
+  }
+}
+
+@keyframes DetailToolbar_fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Exit — `[data-exiting='true']` set from the `isExiting` prop
+   (`DetailPageContent`, shared with `MediaCarousel`/`ArtifactStory`).
+   The literal reverse of the entrance above: border retreats from 50%
+   back to 0% (the same edges it grew from), links fade out — both
+   concurrent, not sequenced, so the whole bar exits quickly rather than
+   the entrance's "border first, then links" build-up. */
+@media (prefers-reduced-motion: no-preference) {
+  .DetailToolbar[data-exiting='true'] .DetailToolbar_borderTopLeft,
+  .DetailToolbar[data-exiting='true'] .DetailToolbar_borderTopRight,
+  .DetailToolbar[data-exiting='true'] .DetailToolbar_borderBottomLeft,
+  .DetailToolbar[data-exiting='true'] .DetailToolbar_borderBottomRight {
+    animation: DetailToolbar_borderRetreat 0.5s ease-in both;
+  }
+
+  .DetailToolbar[data-exiting='true'] .DetailToolbar_link,
+  .DetailToolbar[data-exiting='true'] .DetailToolbar_next {
+    animation: DetailToolbar_fadeOut 0.3s ease-in both;
+  }
+}
+
+@keyframes DetailToolbar_borderRetreat {
+  from {
+    width: 50%;
+  }
+  to {
+    width: 0%;
+  }
+}
+
+@keyframes DetailToolbar_fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+.DetailToolbar_link {
+  @apply text-foreground-muted hover:text-foreground focus-visible:outline-foreground flex items-center gap-2 px-5 py-3 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 sm:px-6 sm:text-base;
+}
+
+/* "Next story" is the mock's own filled cream/light button (the
+   theme-aware `--cta-background`/`--cta-foreground` tokens, same "CTA"
+   treatment `LandingHero`'s "Enter Exhibition" button already uses) —
+   distinct from "All Objects," which stays a plain muted-text link. No
+   `py-*`/rounding/hover-scale of its own: `items-stretch` above makes it
+   fill the bar's exact height (matching the mock, where the button is the
+   same height as the bar itself, not a smaller pill floating inside it),
+   and a scale transform would just get visibly clipped by the parent's
+   `overflow-hidden` at these edge-flush bounds — `bg-cta/90` alone gives
+   hover feedback instead. */
+.DetailToolbar_next {
+  @apply bg-cta text-cta-foreground hover:bg-cta/90 focus-visible:outline-cta-foreground flex items-center gap-2 px-4 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 sm:px-5 sm:text-base;
+}
+
+.DetailToolbar_icon {
+  @apply h-5 w-5 shrink-0;
+}
