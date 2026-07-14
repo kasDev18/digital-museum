@@ -12,11 +12,7 @@ export const mockArtifacts: Artifact[] = [
     title: 'Wooden Chest',
     type: 'Useable',
     thumbnail: '/images/artifacts/wooden-chest/thumbnail.jpg',
-    media: [
-      '/images/artifacts/wooden-chest/1.jpg',
-      '/images/artifacts/wooden-chest/2.jpg',
-      '/images/artifacts/wooden-chest/3.jpg',
-    ],
+    media: ['/images/artifacts/wooden-chest/1.jpg'],
     description:
       "This hand-carved wooden chest was used to store a family's most valuable possessions — linens, documents, and dowry gifts — before being passed down as an heirloom. Its dovetail joinery and brass fittings reflect a tradition of furniture-making practiced across generations of Filipino woodworkers.",
     contributor: {
@@ -39,7 +35,7 @@ export const mockArtifacts: Artifact[] = [
     title: 'Vyshyvanka',
     type: 'Wearable',
     thumbnail: '/images/artifacts/vyshyvanka/thumbnail.jpg',
-    media: ['/images/artifacts/vyshyvanka/1.jpg', '/images/artifacts/vyshyvanka/2.jpg'],
+    media: ['/images/artifacts/vyshyvanka/1.jpg'],
     description:
       "A vyshyvanka is a traditional Ukrainian shirt embroidered with symbolic patterns unique to the wearer's home region — a stitched signature of identity, protection, and belonging.",
     contributor: {
@@ -62,11 +58,7 @@ export const mockArtifacts: Artifact[] = [
     title: 'Carnival Mask',
     type: 'Ceremonial',
     thumbnail: '/images/artifacts/carnival-mask/thumbnail.jpg',
-    media: [
-      '/images/artifacts/carnival-mask/1.jpg',
-      '/images/artifacts/carnival-mask/2.jpg',
-      '/images/artifacts/carnival-mask/3.jpg',
-    ],
+    media: ['/images/artifacts/carnival-mask/1.jpg', '/images/artifacts/carnival-mask/2.jpg'],
     description:
       "Carved from light balsa wood and finished with hand-painted lacquer, this mask was worn during Rio de Janeiro's Carnival street processions, its exaggerated features designed to be seen from a distance in a crowd of thousands.",
     contributor: {
@@ -110,11 +102,7 @@ export const mockArtifacts: Artifact[] = [
     title: 'Mshatta Façade',
     type: 'Architectural',
     thumbnail: '/images/artifacts/mshatta-facade/thumbnail.jpg',
-    media: [
-      '/images/artifacts/mshatta-facade/1.jpg',
-      '/images/artifacts/mshatta-facade/2.jpg',
-      '/images/artifacts/mshatta-facade/3.jpg',
-    ],
+    media: ['/images/artifacts/mshatta-facade/1.jpg', '/images/artifacts/mshatta-facade/2.jpg'],
     description:
       "The Mshatta Facade is a richly decorated stone wall from an 8th-century Umayyad desert castle in Jordan, carved with vine scrolls, rosettes, and paired animals drinking from a shared fountain. Sections of the original facade were gifted to Kaiser Wilhelm II in 1903 and now reside in Berlin's Pergamon Museum.",
     contributor: {
@@ -159,11 +147,7 @@ export const mockArtifacts: Artifact[] = [
     title: 'Tatreez Thobe',
     type: 'Wearable',
     thumbnail: '/images/artifacts/tatreez-thobe/thumbnail.jpg',
-    media: [
-      '/images/artifacts/tatreez-thobe/1.jpg',
-      '/images/artifacts/tatreez-thobe/2.jpg',
-      '/images/artifacts/tatreez-thobe/3.jpg',
-    ],
+    media: ['/images/artifacts/tatreez-thobe/1.jpg', '/images/artifacts/tatreez-thobe/2.jpg'],
     description:
       "This thobe is embroidered with tatreez, a centuries-old Palestinian cross-stitch tradition in which the color and pattern of the embroidery once identified a woman's home village.",
     contributor: {
@@ -186,7 +170,7 @@ export const mockArtifacts: Artifact[] = [
     title: 'Mbira',
     type: 'Musical',
     thumbnail: '/images/artifacts/mbira/thumbnail.jpg',
-    media: ['/images/artifacts/mbira/1.jpg', '/images/artifacts/mbira/2.jpg'],
+    media: ['/images/artifacts/mbira/1.jpg'],
     description:
       'The mbira dzavadzimu is a Zimbabwean thumb piano made of metal keys mounted on a hardwood soundboard, traditionally played at all-night ceremonies to summon ancestral spirits.',
     contributor: {
@@ -277,7 +261,7 @@ export const mockArtifacts: Artifact[] = [
     title: 'Jamdani',
     type: 'Decorative',
     thumbnail: '/images/artifacts/jamdani/thumbnail.jpg',
-    media: ['/images/artifacts/jamdani/1.jpg', '/images/artifacts/jamdani/2.jpg'],
+    media: ['/images/artifacts/jamdani/1.jpg'],
     description:
       'Jamdani is a fine, hand-loomed muslin textile from Bangladesh, woven with intricate discontinuous-weft patterns so delicate that a single sari can take months to complete.',
     contributor: {

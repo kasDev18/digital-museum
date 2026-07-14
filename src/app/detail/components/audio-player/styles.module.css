@@ -1,8 +1,15 @@
 @reference "tailwindcss";
 @reference '../../../../app/globals.css';
 
+/* Fixed white pill / navy foreground — per the Mshatta Façade detail mock,
+   this player is its own deliberate "white card" floating on the page,
+   not a theme-following surface. Same "don't use --background/--foreground
+   tokens" call as MediaCarousel's dark-on-white overlays, but for a
+   different reason: that component is reacting to unpredictable photo
+   content, this one is a fixed design element that looks the same in
+   both the light and dark site themes by design. */
 .AudioPlayer {
-  @apply flex items-center gap-3;
+  @apply text-navy flex items-center gap-3 rounded-full bg-white px-4 py-2 shadow-sm sm:gap-4 sm:px-5 sm:py-2.5;
 }
 
 .AudioPlayer[data-disabled='true'] {
@@ -10,27 +17,87 @@
 }
 
 .AudioPlayer_toggle {
-  @apply bg-foreground text-background flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-transform hover:scale-[1.05] active:scale-[0.95] disabled:cursor-not-allowed disabled:hover:scale-100 disabled:active:scale-100;
+  @apply bg-navy flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white transition-transform hover:scale-[1.05] active:scale-[0.95] disabled:cursor-not-allowed disabled:hover:scale-100 disabled:active:scale-100;
 }
 
 .AudioPlayer_icon {
   @apply h-4 w-4;
 }
 
-/* Minimal seek bar — the mock's exact tick-mark waveform visualization is
-   Story 5.3's own scope (see AudioPlayer's doc comment); `accent-color`
-   (native, theme-following via `currentColor`) covers the filled-progress
-   look with no custom thumb/track pseudo-elements needed for this pass. */
-.AudioPlayer_track {
-  @apply accent-foreground h-1 flex-1 cursor-pointer disabled:cursor-not-allowed;
+.AudioPlayer_scrubber {
+  @apply relative flex h-4 flex-1 items-center;
 }
 
-/* PSD: "Noto Sans Display" bold, 13px/18px, dark blue — the dark-blue
-   color only reads against the PSD's own white player pill, which is
-   Story 5.3's fuller-fidelity scope (this player is still the
-   deliberately minimal stand-in its own doc comment describes), so only
-   the font-family/weight transfer here; color stays `--foreground-muted`
-   for legibility against this player's current (non-white) background. */
+/* Decorative tick-mark waveform (Story 5.3), stacked directly under the
+   real `<input type="range">` below — evenly-spaced bars rather than a
+   real audio-signal analysis, per that story's own Technical Notes. */
+.AudioPlayer_waveform {
+  @apply pointer-events-none absolute inset-0 flex items-center gap-[3px];
+}
+
+.AudioPlayer_waveformTick {
+  @apply bg-navy/25 h-1.5 w-[2px] flex-1 rounded-full transition-colors;
+}
+
+.AudioPlayer_waveformTick[data-played='true'] {
+  @apply bg-navy h-3;
+}
+
+/* The real interactive element — sized/positioned to sit exactly over the
+   waveform ticks above, but its own track/thumb are made fully
+   transparent (both engines' pseudo-elements) so only the decorative
+   ticks read visually; dragging, clicking, and keyboard seeking still hit
+   this element since it's on top. */
+/* `appearance-none` (needed so only the decorative ticks show through, see
+   the comment above) suppresses the browser's own default focus ring on
+   this input entirely in WebKit/Safari, and leaves an invisible-thumb
+   focus ring in other engines — `focus-visible:outline` explicitly
+   replaces it rather than relying on whatever's left over, so keyboard
+   users seeking with arrow keys still get a visible indicator. */
+.AudioPlayer_track {
+  /* `outline-0` (zero-width), not `outline-none` — the latter also sets
+     Tailwind's `--tw-outline-style` custom property to `none` on this
+     element, and `focus-visible:outline-2` below only ever reads that
+     same variable rather than resetting it, so it would stay `none` (no
+     visible ring) even once focused. `outline-0` leaves the variable at
+     its default `solid` and just zeroes the width, so the focus-visible
+     override actually renders. */
+  @apply focus-visible:outline-navy absolute inset-0 h-full w-full cursor-pointer appearance-none rounded bg-transparent outline-0 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed;
+}
+
+.AudioPlayer_track::-webkit-slider-runnable-track {
+  background: transparent;
+}
+
+.AudioPlayer_track::-webkit-slider-thumb {
+  appearance: none;
+  width: 2px;
+  height: 100%;
+  background: transparent;
+}
+
+.AudioPlayer_track::-moz-range-track {
+  background: transparent;
+  border: none;
+}
+
+.AudioPlayer_track::-moz-range-thumb {
+  width: 2px;
+  height: 100%;
+  background: transparent;
+  border: none;
+}
+
+.AudioPlayer_mute {
+  @apply text-navy/70 hover:text-navy disabled:hover:text-navy/70 flex h-8 w-8 shrink-0 items-center justify-center transition-colors disabled:cursor-not-allowed;
+}
+
+.AudioPlayer_muteIcon {
+  @apply h-4 w-4;
+}
+
+/* PSD: "Noto Sans Display" bold, 13px/18px, dark blue — now reads
+   correctly against the pill's own white background above. */
 .AudioPlayer_time {
-  @apply text-foreground-muted shrink-0 font-sans text-xs font-bold tabular-nums sm:text-sm;
+  @apply text-navy shrink-0 font-sans text-xs font-bold tabular-nums sm:text-sm;
 }

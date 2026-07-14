@@ -1,5 +1,5 @@
 # generated: 2026-07-11
-# last_updated: 2026-07-13 (Stories 5.1 & 5.2 implemented — Detail page layout + top toolbar, and the media carousel — on top of Stories 4.3, 4.4 & 4.5, plus a Story 4.1 addendum)
+# last_updated: 2026-07-14 (Stories 5.3 & 5.4 implemented — AudioPlayer waveform scrubber + mute toggle, and MediaCarousel zoom in/out controls — on top of Stories 5.1 & 5.2)
 # project: digital-museum
 # project_key: NOKEY
 # tracking_system: file-system
@@ -9,7 +9,7 @@
 # readiness: IN PROGRESS - Epic 1 partially complete
 # architectural_decision: Next.js (App Router) + Tailwind CSS + GSAP for animations, no backend/CMS required, mock data-driven content
 # NOTE: This is a technical assessment project with a 4-day deadline (July 15, 2026). Required scope = Epics 1-4 + 6 (Landing Page + List Page + QA). Epic 5 (Details Page) is stretch scope only if time permits.
-# CURRENT STATUS: Epic 1 complete (all 7 stories done). Epic 2 complete - all 5 stories (2.1-2.5) done. Epic 3 complete - all 5 stories (3.1-3.5) done. Epic 4 complete - all 5 stories (4.1-4.5) done. Epic 5 (stretch) in progress - Stories 5.1 & 5.2 done (Detail page layout + media carousel). Epic 6 (QA & Delivery) still pending - required scope, not yet started.
+# CURRENT STATUS: Epic 1 complete (all 7 stories done). Epic 2 complete - all 5 stories (2.1-2.5) done. Epic 3 complete - all 5 stories (3.1-3.5) done. Epic 4 complete - all 5 stories (4.1-4.5) done. Epic 5 (stretch) in progress - Stories 5.1-5.4 done (Detail page layout, media carousel, audio controls, zoom controls). Epic 6 (QA & Delivery) still pending - required scope, not yet started.
 
 # STATUS DEFINITIONS:
 # ==================
@@ -110,8 +110,8 @@ development_status:
   epic-5: in-progress
   5-1-build-detail-page-layout: done
   5-2-implement-media-carousel: done
-  5-3-add-audio-controls: ready-for-dev
-  5-4-add-zoom-controls: ready-for-dev
+  5-3-add-audio-controls: done
+  5-4-add-zoom-controls: done
   5-5-add-download-pdf-action: ready-for-dev
   5-6-add-comment-affordance: ready-for-dev
   5-7-add-migration-journey-widget: ready-for-dev
@@ -206,7 +206,7 @@ development_status:
 #     underlying pointer-events drag/pan and `touch-pan-y` gesture isolation
 #     were already in place from Story 4.1)
 #
-# Epic 5 Progress: 2/8 stories complete (25%) — IN PROGRESS (stretch scope)
+# Epic 5 Progress: 4/8 stories complete (50%) — IN PROGRESS (stretch scope)
 # Completed Stories:
 #   - Story 5.1: Build Detail Page Layout ✅ (`DetailPageContent` supersedes
 #     Story 3.5's `DetailPlaceholder` stopgap; `DetailToolbar`'s "All
@@ -217,9 +217,21 @@ development_status:
 #     Images" button, clickable dot indicators, arrow-key and swipe
 #     navigation, all wrapping at both ends; hides its own controls
 #     entirely for single-item media)
+#   - Story 5.3: Add Audio Controls ✅ (`AudioPlayer` gains a decorative
+#     tick-mark waveform scrubber layered behind its existing native range
+#     input — visuals only, seeking/dragging/keyboard behavior unchanged —
+#     plus a new mute/unmute toggle (`SoundOnIcon`/`SoundOffIcon`); both
+#     disable together with the rest of the player for `audioUrl: null`
+#     artifacts)
+#   - Story 5.4: Add Zoom Controls ✅ (`MediaCarousel` gains a top-right
+#     zoom in/out overlay — CSS `transform: scale` on the active slide
+#     only, 0.5x-3x range in 0.5x steps, buttons natively disable at each
+#     boundary, resets to 1x on every slide change via all four existing
+#     navigation paths; renders even for single-image artifacts, unlike
+#     the "More Images"/dots controls)
 #
-# Overall Project Progress: 24/38 stories complete (63%)
-# Remaining Work: 14 stories (37%)
+# Overall Project Progress: 26/38 stories complete (68%)
+# Remaining Work: 12 stories (32%)
 # Estimated Completion: Epics 1-4 complete (required scope); Epic 5
-#   (Details Page, stretch) in progress with Stories 5.1/5.2 done — Epic 6
+#   (Details Page, stretch) in progress with Stories 5.1-5.4 done — Epic 6
 #   (QA & Delivery) is the remaining required scope, not yet started

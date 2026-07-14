@@ -4,7 +4,7 @@ import { useRef, useState } from 'react'
 import type { KeyboardEvent, TouchEvent } from 'react'
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
-import { ChevronDownIcon } from '@/components/ui/icons'
+import { ChevronDownIcon, ZoomInIcon, ZoomOutIcon } from '@/components/ui/icons'
 import styles from './styles.module.css'
 
 export interface MediaCarouselProps {
@@ -17,6 +17,12 @@ export interface MediaCarouselProps {
 
 /** Minimum horizontal touch travel (px) before a swipe counts as a slide change, not an incidental tap/scroll jitter. */
 const SWIPE_THRESHOLD_PX = 40
+
+/** Story 5.4's zoom range/step — the story's own AC gives "0.5x to 3x" as the example range for these overlay controls. */
+const MIN_ZOOM = 0.5
+const MAX_ZOOM = 3
+const ZOOM_STEP = 0.5
+const DEFAULT_ZOOM = 1
 
 /**
  * Primary media frame for the Detail page (Story 5.2): a single active
@@ -37,7 +43,19 @@ const SWIPE_THRESHOLD_PX = 40
  * Single-item media (e.g. the Bamboo Pen's one photo) and the
  * zero-item-after-fallback edge case both render just the image with none
  * of the above controls — advancing to "the next image" is meaningless
- * with nothing to advance to.
+ * with nothing to advance to. Story 5.4's zoom in/out overlay is the one
+ * exception: it renders regardless of `hasMultiple`, since even a single
+ * photo benefits from examining fine detail up close.
+ *
+ * Zoom (Story 5.4) is a plain CSS `transform: scale(...)` on the *active*
+ * slide's image only — applied here rather than on `.MediaCarousel_track`
+ * (which drives the shared horizontal slide offset for every slide at
+ * once) so scaling one image up never shifts where the others sit. The
+ * outer frame's own `overflow-hidden` already clips whatever spills past
+ * its bounds, so zooming in just reveals more of the same image within
+ * the existing frame rather than requiring any new clipping. Resets to
+ * `DEFAULT_ZOOM` on every slide change, per that story's own AC — zooming
+ * into one image shouldn't carry over to the next.
  *
  * Flips-while-fading in on mount (`@keyframes` gated behind
  * `prefers-reduced-motion`, same technique as `DetailToolbar`'s border
@@ -61,8 +79,29 @@ export function MediaCarousel({ media, className, isExiting }: MediaCarouselProp
   // of the browser's broken-image icon, same "hide on error" convention
   // `ArtifactThumbnail` already uses for its own thumbnail image.
   const [erroredIndices, setErroredIndices] = useState<ReadonlySet<number>>(new Set())
+  const [zoom, setZoom] = useState(DEFAULT_ZOOM)
+  // Tracks the slide index zoom was last reset for — compared against the
+  // current `index` during render (React's own recommended pattern for
+  // "reset state when a prop/value changes", see
+  // https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes)
+  // rather than a `useEffect`, which would commit the stale-zoom frame
+  // first and only reset one render later.
+  const [zoomResetForIndex, setZoomResetForIndex] = useState(index)
 
   const hasMultiple = media.length > 1
+
+  // Slide change (any of the four navigation paths below) always resets
+  // zoom — per Story 5.4's own AC — rather than only the explicit
+  // "More Images"/dot/arrow handlers each remembering to do it.
+  if (index !== zoomResetForIndex) {
+    setZoomResetForIndex(index)
+    setZoom(DEFAULT_ZOOM)
+  }
+
+  const zoomIn = () =>
+    setZoom(current => Math.min(MAX_ZOOM, Math.round((current + ZOOM_STEP) * 100) / 100))
+  const zoomOut = () =>
+    setZoom(current => Math.max(MIN_ZOOM, Math.round((current - ZOOM_STEP) * 100) / 100))
 
   // Plain functions, not `useCallback` — nothing downstream is memoized
   // against their identity, so wrapping them would only add hooks with no
@@ -138,11 +177,33 @@ export function MediaCarousel({ media, className, isExiting }: MediaCarouselProp
                 priority={i === 0}
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className={styles.MediaCarousel_image}
+                style={i === index ? { transform: `scale(${zoom})` } : undefined}
                 onError={() => setErroredIndices(prev => new Set(prev).add(i))}
               />
             )}
           </div>
         ))}
+      </div>
+
+      <div className={styles.MediaCarousel_zoom}>
+        <button
+          type="button"
+          onClick={zoomOut}
+          disabled={zoom <= MIN_ZOOM}
+          aria-label="Zoom out"
+          className={styles.MediaCarousel_zoomButton}
+        >
+          <ZoomOutIcon className={styles.MediaCarousel_zoomIcon} />
+        </button>
+        <button
+          type="button"
+          onClick={zoomIn}
+          disabled={zoom >= MAX_ZOOM}
+          aria-label="Zoom in"
+          className={styles.MediaCarousel_zoomButton}
+        >
+          <ZoomInIcon className={styles.MediaCarousel_zoomIcon} />
+        </button>
       </div>
 
       {hasMultiple && (

@@ -202,6 +202,99 @@ export function PauseIcon(props: SVGProps<SVGSVGElement>) {
   )
 }
 
+/** `AudioPlayer`'s mute toggle (Story 5.3) — unmuted state, speaker cone plus two sound-wave arcs. Pairs with `SoundOffIcon`. */
+export function SoundOnIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      viewBox="0 0 40 40"
+      fill="none"
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.75"
+        d="M11 15.5h4l6-5v19l-6-5h-4a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1Z"
+      />
+      <path
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeWidth="1.75"
+        d="M25.5 15.5a6 6 0 0 1 0 9M29 12a11 11 0 0 1 0 16"
+      />
+    </svg>
+  )
+}
+
+/** Pairs with `SoundOnIcon` as `AudioPlayer`'s toggled (muted) state — same speaker cone, sound-wave arcs replaced with an X. */
+export function SoundOffIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      viewBox="0 0 40 40"
+      fill="none"
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.75"
+        d="M11 15.5h4l6-5v19l-6-5h-4a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1Z"
+      />
+      <path
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeWidth="1.75"
+        d="M25 15.5 32 24.5M32 15.5l-7 9"
+      />
+    </svg>
+  )
+}
+
+/** `MediaCarousel`'s zoom-in overlay control (Story 5.4) — magnifying glass with a `+`. Pairs with `ZoomOutIcon`. */
+export function ZoomInIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      viewBox="0 0 40 40"
+      fill="none"
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <circle cx="17" cy="17" r="10" stroke="currentColor" strokeWidth="1.5" />
+      <path stroke="currentColor" strokeLinecap="round" strokeWidth="1.5" d="M28.5 28.5 34 34" />
+      <path
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeWidth="1.5"
+        d="M17 12.5v9M12.5 17h9"
+      />
+    </svg>
+  )
+}
+
+/** Pairs with `ZoomInIcon` — same magnifying glass, `+` replaced with a `-`. */
+export function ZoomOutIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      viewBox="0 0 40 40"
+      fill="none"
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <circle cx="17" cy="17" r="10" stroke="currentColor" strokeWidth="1.5" />
+      <path stroke="currentColor" strokeLinecap="round" strokeWidth="1.5" d="M28.5 28.5 34 34" />
+      <path stroke="currentColor" strokeLinecap="round" strokeWidth="1.5" d="M12.5 17h9" />
+    </svg>
+  )
+}
+
 /** MediaCarousel's "More Images" affordance (Story 5.2) — per the detail mock's downward-chevron treatment on that button, distinct from `ExploreStoryArrowIcon`'s circled diagonal arrow used for the Detail page's own "Next story" control. */
 export function ChevronDownIcon(props: SVGProps<SVGSVGElement>) {
   return (
