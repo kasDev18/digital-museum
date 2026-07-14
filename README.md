@@ -115,9 +115,6 @@ digital-museum/
 │   └── assets/                  # Icons and other non-photographic static assets
 ├── docs/                        # Additional documentation (e.g. GSAP performance guide)
 ├── .github/                     # GitHub workflows and configurations
-├── AGENTS.md                    # AI agent guidelines
-├── EPICS_AND_STORIES.md         # Detailed project specifications
-├── CLAUDE.md                    # Claude-specific rules
 ├── package.json                 # Project dependencies and scripts
 ├── tsconfig.json                # TypeScript configuration
 ├── next.config.ts               # Next.js configuration
@@ -204,8 +201,6 @@ interface Artifact {
 - **No CMS/backend, by design** — content is static and mock-data-driven (`src/data/mock-data.ts`), so content changes require a code change.
 - **No automated test suite is configured.** Correctness is verified via `pnpm lint` / `pnpm ts:check` / `pnpm build` plus manual testing.
 
-See `_bmad-output/implementation-artifacts/deferred-work.md` for the full, itemized list of known/accepted gaps.
-
 ## 🧪 Development Workflow
 
 1. **Feature Development:** Create components in appropriate directories
@@ -216,8 +211,6 @@ See `_bmad-output/implementation-artifacts/deferred-work.md` for the full, itemi
 
 ## 📚 Documentation
 
-- **[EPICS_AND_STORIES.md](./EPICS_AND_STORIES.md)** - Detailed project specifications and user stories
-- **[AGENTS.md](./AGENTS.md)** - AI agent development guidelines
 - **[docs/gsap-performance.md](./docs/gsap-performance.md)** - GSAP setup, context management, and performance guidelines
 - **[Next.js Docs](https://nextjs.org/docs)** - Framework documentation
 - **[Tailwind CSS Docs](https://tailwindcss.com/docs)** - Styling documentation
