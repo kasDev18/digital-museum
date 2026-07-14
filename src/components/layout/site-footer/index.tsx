@@ -23,6 +23,17 @@ export function SiteFooter() {
   // just appearing as a static line the instant opacity hits 1.
   const [revealed, setRevealed] = useState(!isLanding)
 
+  // Re-arm the reveal on every transition into the landing route (not just
+  // the first mount), so client-side navigation back to `/` replays the
+  // fade-in instead of leaving the footer stuck visible from before. This
+  // adjusts state during render (React's documented pattern for resetting
+  // state when a prop changes) rather than in an effect.
+  const [prevIsLanding, setPrevIsLanding] = useState(isLanding)
+  if (isLanding !== prevIsLanding) {
+    setPrevIsLanding(isLanding)
+    setRevealed(!isLanding)
+  }
+
   useEffect(() => {
     if (revealed) return
     return subscribeToLandingReveal(() => setRevealed(true))
